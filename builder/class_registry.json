@@ -1,0 +1,81 @@
+{
+  "appName": "happening",
+  "registeredClasses": [
+    {
+      "classData": {
+        "name": "FormFieldData",
+        "fieldData": [
+          {
+            "type": "String",
+            "name": "name",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "String",
+            "name": "label",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "String",
+            "name": "placeHolder",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "String",
+            "name": "dataType",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "String",
+            "name": "constraints",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "String",
+            "name": "size",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "bool",
+            "name": "multiLine",
+            "isAClass": false,
+            "isAList": false
+          }
+        ],
+        "neededImports": []
+      },
+      "dateModified": "2021-09-22 11:00",
+      "isMainRequest": true
+    },
+    {
+      "classData": {
+        "name": "FormData",
+        "fieldData": [
+          {
+            "type": "String",
+            "name": "className",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "type": "FormFieldData",
+            "name": "formFieldData",
+            "isAClass": true,
+            "isAList": true
+          }
+        ],
+        "neededImports": [
+          "FormFieldData"
+        ]
+      },
+      "dateModified": "2021-09-22 11:00",
+      "isMainRequest": true
+    }
+  ]
+}

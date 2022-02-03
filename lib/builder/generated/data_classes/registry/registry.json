@@ -1,0 +1,81 @@
+{
+  "appName": "newApp",
+  "registeredClasses": [
+    {
+      "classData": {
+        "id": "b6f6f4a3-a8e8-4fc2-8062-959723e04c68",
+        "name": "Another",
+        "fieldData": [
+          {
+            "id": "21c2e090-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Person",
+            "type": "String",
+            "name": "name",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "id": "2584a380-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Person",
+            "type": "double",
+            "name": "age",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "id": "2833bdf0-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Person",
+            "type": "String",
+            "name": "friends",
+            "description": "description",
+            "isAClass": false,
+            "isAList": true
+          },
+          {
+            "id": "896a3770-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Person",
+            "type": "String",
+            "name": "friendName",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "id": "c82aab70-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Person",
+            "type": "Person",
+            "name": "anotherPerson",
+            "description": "description",
+            "isAClass": true,
+            "isAList": false
+          },
+          {
+            "id": "e688b7b0-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Another",
+            "type": "String",
+            "name": "hello",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          },
+          {
+            "id": "e9250d70-8127-11ec-9af5-4d6b2b3f94c3",
+            "parentClass": "Another",
+            "type": "String",
+            "name": "goodbye",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          }
+        ],
+        "neededImports": [
+          "Person"
+        ]
+      },
+      "dateModified": "",
+      "isMainRequest": false
+    }
+  ]
+}
