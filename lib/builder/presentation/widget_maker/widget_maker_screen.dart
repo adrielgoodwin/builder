@@ -130,56 +130,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     ),
   };
 
-  // Step 1. build up to the most nearby fork
-  // Step 2. Put the metaWidget in the consolidation map
-  // Step 3. check if all siblings are built
-  // Step 4. if not, make a pass and repeat this process
-  // would need to store somewhere all of this
-  // build up returns a meta widget, so maybe a new map could work
-  // where the key is the parent id that the meta widget wants and the value is itself
 
-  // What we want to do next then is make 'passes'?
-  // We need each intersection to 'know' its parens that are intersections
-  // The pass is a check to see which intersection can be consolidated
-  // so the intersection checks to see if any of its descendant id's are themselves intersections
-
-  /// store all 'completed branches' In a Map, with their top id and complete MetaWidget
-
-  /// a function that will 'merge' the metaWidgets together into a tree
-  MetaWidget assembleTree() {
-    /// Get all the tips, or end widgets with no children
-    var branchTips = metaTreeItems.values.where((element) => element.hasChild == false && element.hasChildren == false);
-
-    /// make a list to hold onto the MetaWidgets who need consolidation
-    List<MetaWidgetWithParent> consolidationList = [];
-
-    /// loop over tips to build up to nearest branch
-    for (var tip in branchTips) {
-      late MetaWidget metaWidget;
-
-      /// Check to see which type it is, get the appropriate parameters, and set the metaWidget
-      if (tip.metaWidgetEnum == MetaWidgets.flexible) {
-        metaWidget = metaWidgetMap[tip.metaWidgetEnum]!(metaWidgetParameters.flexParams['base']);
-      } else if (tip.metaWidgetEnum == MetaWidgets.text) {
-        metaWidget = metaWidgetMap[tip.metaWidgetEnum]!(metaWidgetParameters.textParams['base']);
-      }
-
-      /// here, buildUp will put each child into their parent until a branch is reached.
-      /// At that point it returns the latest MetaWidget, with its children consolidated,
-      /// grouped with its parent MetaTreeItem (that's a branch)
-      MetaWidgetWithParent metaWidgetWithParent = buildUp(metaTreeItems[tip.parentId]!, metaWidget);
-      print("MetaWidget parent id from tip buildUp: ${metaWidgetWithParent.parent.id}");
-
-      /// This MetaWidgetWithParent is added to the consolidation list for further consolidation
-      consolidationList.add(metaWidgetWithParent);
-    }
-
-    /// Consolidate all until the top widget is reached
-    List<MetaWidgetWithParent> completedConsolidation = consolidate(consolidationList);
-
-    /// Return that final widget
-    return completedConsolidation[0].metaWidget;
-  }
 
   var consolidationCount = 1;
 
@@ -187,15 +138,6 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
 
 
 
-  bool isBranch(MetaTreeItem mti) {
-    if (mti.metaWidgetEnum == MetaWidgets.column || mti.metaWidgetEnum == MetaWidgets.row) {
-      if (mti.children.isEmpty) {
-        false;
-      }
-      return true;
-    }
-    return false;
-  }
 
 
 
