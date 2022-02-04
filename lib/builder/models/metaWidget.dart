@@ -192,10 +192,12 @@ class MetaText2 extends MetaWidget {
 class MetaRowParams {
   MetaRowParams({
     this.children = const [],
+    this.id = "defaultId",
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
   });
 
+  String id;
   List<MetaWidget> children;
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;

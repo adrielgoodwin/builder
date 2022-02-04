@@ -60,7 +60,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
       children: [],
       childrenBranches: ['Column2', 'Column1'],
       id: 'TopRow',
-      metaWidgetEnum: MetaWidgets.column,
+      metaWidgetEnum: MetaWidgets.row,
       hasChild: false,
       hasChildren: true,
     ),

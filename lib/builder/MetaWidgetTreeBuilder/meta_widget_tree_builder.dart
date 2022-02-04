@@ -107,13 +107,12 @@ MetaWidget buildMultiChildMetaWidget(MetaTreeItem parent, List<MetaWidget> child
   if (constructorKey == MetaWidgets.row) {
     var rowParams = metaWidgetParameters.rowParams['base']!;
     rowParams.children = children;
+    rowParams.id = parent.id;
     consolidatedBranch = metaWidgetMap[constructorKey]!(rowParams);
-
   } else if (constructorKey == MetaWidgets.column) {
     var columnParams = metaWidgetParameters.columnParams['base']!;
     columnParams.children = children;
     consolidatedBranch = metaWidgetMap[constructorKey]!(columnParams);
-
   }
   return consolidatedBranch;
 }
