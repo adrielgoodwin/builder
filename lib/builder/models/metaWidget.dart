@@ -27,6 +27,18 @@ class MetaWidgetWithParent {
   MetaWidgetWithParent(this.metaWidget, this.parent);
 }
 
+MetaTextParams mtp = MetaTextParams();
+
+MetaText mt = MetaText(mtp);
+
+MetaRowParams mrp = MetaRowParams(children: [mt]);
+
+MetaRow mr = MetaRow(mrp);
+
+MetaFlexibleParams mfp = MetaFlexibleParams(child: mr);
+
+MetaWidget metaWidgetTest = MetaFlexible(mfp);
+
 /// This class is a container for our MetaWidget parameters.
 /// When we add a MetaWidget into the 'tree' we will give it some
 /// parameters, which we store here and associate with an id
@@ -245,8 +257,9 @@ class MetaSizedBox extends MetaWidget {
 }
 
 class MetaFlexibleParams {
-  MetaFlexibleParams({this.flex = 1, this.child = const MetaSizedBox()});
+  MetaFlexibleParams({this.flex = 1, this.id = "defaultId", this.child = const MetaSizedBox()});
 
+  String id;
   final int flex;
   MetaWidget child;
 }

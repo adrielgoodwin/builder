@@ -1,5 +1,7 @@
 import '../models/metaWidget.dart';
 
+/// explosion branch
+
 // Step 1. build up to the most nearby fork
 // Step 2. Put the metaWidget in the consolidation map
 // Step 3. check if all siblings are built
@@ -17,13 +19,19 @@ import '../models/metaWidget.dart';
 
 /// a function that will 'merge' the metaWidgets together into a tree
 MetaWidget assembleTree(Map<String, MetaTreeItem> metaTreeItems, MetaWidgetParameters metaWidgetParameters) {
+
+  print("\n Building tips:");
+
   /// Get all the tips, or end widgets with no children
   var branchTips = metaTreeItems.values.where((element) => element.hasChild == false && element.hasChildren == false);
 
   /// make a list to hold onto the MetaWidgets who need consolidation
   List<MetaWidgetWithParent> consolidationList = [];
 
-  /// here is my commited change in sentimental branch 1
+  for(var tip in branchTips) {
+    print("${tip.metaWidgetEnum.toString().split(".")[1]} widget id: ${tip.id}");
+  }
+
   /// loop over tips to build up to nearest branch
   for (var tip in branchTips) {
     late MetaWidget metaWidget;
@@ -38,53 +46,59 @@ MetaWidget assembleTree(Map<String, MetaTreeItem> metaTreeItems, MetaWidgetParam
     /// here, buildUp will put each child into their parent until a branch is reached.
     /// At that point it returns the latest MetaWidget, with its children consolidated,
     /// grouped with its parent MetaTreeItem (that's a branch)
-    MetaWidgetWithParent metaWidgetWithParent = buildUp(metaTreeItems[tip.parentId]!, metaWidget,  metaTreeItems, metaWidgetParameters);
+    MetaWidgetWithParent metaWidgetWithParent = buildUp(metaTreeItems[tip.parentId]!, metaWidget, metaTreeItems, metaWidgetParameters);
     print("MetaWidget parent id from tip buildUp: ${metaWidgetWithParent.parent.id}");
 
     /// This MetaWidgetWithParent is added to the consolidation list for further consolidation
     consolidationList.add(metaWidgetWithParent);
   }
 
+  print("Begin consolidation");
+
   /// Consolidate all until the top widget is reached
-  List<MetaWidgetWithParent> completedConsolidation = consolidate(consolidationList, [], metaTreeItems, metaWidgetParameters);
+  List<MetaWidgetWithParent> completedConsolidation = consolidate(consolidationList, metaTreeItems, metaWidgetParameters);
 
   /// Return that final widget
   return completedConsolidation[0].metaWidget;
 }
 
+int consolidationPass = 1;
+
 /// for each branch in the list we want to find the ones with no child branches.
 /// once found, we can merge their children, make a new consolidation list and repeat.
 /// When the list is done, we can just buildUp and return the top widget
-List<MetaWidgetWithParent> consolidate(
-    List<MetaWidgetWithParent> consolidationList,
-    List<String> alreadyConsolidated,
-    Map<String, MetaTreeItem> metaTreeItems,
-    MetaWidgetParameters metaWidgetParameters,
-    ) {
+List<MetaWidgetWithParent> consolidate(List<MetaWidgetWithParent> consolidationList, Map<String, MetaTreeItem> metaTreeItems, MetaWidgetParameters metaWidgetParameters) {
   /// instantiate list for new consolidations
   List<MetaWidgetWithParent> newConsolidationList = [];
 
-  for (MetaWidgetWithParent branch in consolidationList) {
-    print("ConsolidationList branch parent id: ${branch.parent.id}");
+  print("\n Consolidation pass: $consolidationPass");
+  consolidationPass += 1;
 
-    /// get a list of all ids of the rows/columns
-    Set<String> allIds = consolidationList.map((e) => e.parent.id).toSet();
-    /// check if this branch has been consolidated
-    if (!alreadyConsolidated.contains(branch.parent.id)) {
-      if (allIds.intersection(branch.parent.childrenBranches.toSet()).isEmpty) {
-        /// get all meta widgets from the consolidation list where the parent is this branch in question
-        List<MetaWidget> childrenOfBranch = consolidationList.where((element) => element.parent.id == branch.parent.id).map((e) => e.metaWidget).toList();
-        MetaWidget consolidatedBranch = buildMultiChildMetaWidget(branch.parent, childrenOfBranch, metaWidgetParameters);
+  Set<String> allIds = consolidationList.map((e) => e.parent.id).toSet();
 
-        if (consolidationList.length > 1) {
-          MetaWidgetWithParent widgetBeforeNextBranch = buildUp(metaTreeItems[branch.parent.parentId]!, consolidatedBranch, metaTreeItems, metaWidgetParameters);
-          newConsolidationList.add(widgetBeforeNextBranch);
-          alreadyConsolidated.add(branch.parent.id);
-        }
-      }
-    }
+  print("Consolidation List: ${consolidationList.map((e) => e.parent.id).toList()}");
+  /// Find the first buildable branch
+  var buildableBranch = consolidationList.firstWhere((branch) => allIds.intersection(branch.parent.childrenBranches.toSet()).isEmpty);
+
+  print("Branch Being Built: ${buildableBranch.parent.id}");
+
+  /// get all meta widgets from the consolidation list where the parent is this branch in question
+  List<MetaWidget> childrenOfBranch = consolidationList.where((element) => element.parent.id == buildableBranch.parent.id).map((e) => e.metaWidget).toList();
+
+  /// build the branch with all its children
+  MetaWidget consolidatedBranch = buildMultiChildMetaWidget(buildableBranch.parent, childrenOfBranch, metaWidgetParameters);
+  print(consolidatedBranch);
+  MetaWidgetWithParent widgetBeforeNextBranch = buildUp(metaTreeItems[buildableBranch.parent.parentId]!, consolidatedBranch, metaTreeItems, metaWidgetParameters);
+  consolidationList.removeWhere((element) => element.parent.id == buildableBranch.parent.id);
+  print("consolidation list after removals: ${consolidationList.length}");
+  if (consolidationList.isEmpty) {
+    print("Empty consolidation list, building up ${widgetBeforeNextBranch.parent.id}");
+    return [buildUp(metaTreeItems[buildableBranch.parent.parentId]!, consolidatedBranch, metaTreeItems, metaWidgetParameters)];
+  } else {
+    newConsolidationList = [...consolidationList, widgetBeforeNextBranch];
+    print("consolidation list after removals before return: ${newConsolidationList.length}");
+    return consolidate(newConsolidationList, metaTreeItems, metaWidgetParameters);
   }
-  return consolidate(newConsolidationList, alreadyConsolidated, metaTreeItems, metaWidgetParameters);
 }
 
 MetaWidget buildMultiChildMetaWidget(MetaTreeItem parent, List<MetaWidget> children, MetaWidgetParameters metaWidgetParameters) {
@@ -93,17 +107,27 @@ MetaWidget buildMultiChildMetaWidget(MetaTreeItem parent, List<MetaWidget> child
   if (constructorKey == MetaWidgets.row) {
     var rowParams = metaWidgetParameters.rowParams['base']!;
     rowParams.children = children;
-    consolidatedBranch = metaWidgetMap[constructorKey]!(metaWidgetParameters.rowParams['base']);
+    consolidatedBranch = metaWidgetMap[constructorKey]!(rowParams);
+
   } else if (constructorKey == MetaWidgets.column) {
     var columnParams = metaWidgetParameters.columnParams['base']!;
     columnParams.children = children;
-    consolidatedBranch = metaWidgetMap[constructorKey]!(metaWidgetParameters.columnParams['base']);
+    consolidatedBranch = metaWidgetMap[constructorKey]!(columnParams);
+
   }
   return consolidatedBranch;
 }
 
-/// This function is for building up single child branches until it reaches a fork 
+int buildUpIteration = 0;
+
+int flexesBuilt = 0;
+
+/// This function is for building up single child branches until it reaches a fork
 MetaWidgetWithParent buildUp(MetaTreeItem parent, MetaWidget childMetaWidget, Map<String, MetaTreeItem> metaTreeItems, MetaWidgetParameters metaWidgetParameters) {
+
+  print("Build up iteration: $buildUpIteration");
+  buildUpIteration += 1;
+
   /// Check if the parent is a branch, if so we do not build it we just return the MetaWidget
   if (!isBranch(parent)) {
     String nextParentId = parent.parentId;
@@ -117,28 +141,28 @@ MetaWidgetWithParent buildUp(MetaTreeItem parent, MetaWidget childMetaWidget, Ma
       return buildUp(metaTreeItems[nextParentId]!, biggerMetaWidget, metaTreeItems, metaWidgetParameters);
     }
   } else {
+    print("Build up reached a branch: ${parent.id}");
     return MetaWidgetWithParent(childMetaWidget, parent);
   }
 }
 
 MetaWidget buildSingleChildMetaWidget(MetaTreeItem parentTreeItem, MetaWidget childMetaWidget, MetaWidgetParameters metaWidgetParameters) {
   late MetaWidget singleChildMetaWidget;
+
   /// Get the key to construct the parent meta widget
   MetaWidgets constructorKey = parentTreeItem.metaWidgetEnum;
+  print("Building single child meta widget: ${constructorKey.toString()}");
   if (constructorKey == MetaWidgets.flexible) {
+    print("Flexes built: $flexesBuilt");
+    flexesBuilt += 1;
     var flexParams = metaWidgetParameters.flexParams['base']!;
     flexParams.child = childMetaWidget;
+    flexParams.id = parentTreeItem.id;
     singleChildMetaWidget = metaWidgetMap[constructorKey]!(flexParams);
-  } 
+  }
+
   return singleChildMetaWidget;
 }
 
-bool isBranch(MetaTreeItem mti) {
-  if (mti.metaWidgetEnum == MetaWidgets.column || mti.metaWidgetEnum == MetaWidgets.row) {
-    if (mti.children.isEmpty) {
-      false;
-    }
-    return true;
-  }
-  return false;
-}
+/// check if MetaTreeItem is a branch
+bool isBranch(MetaTreeItem mti) => mti.metaWidgetEnum == MetaWidgets.column || mti.metaWidgetEnum == MetaWidgets.row ? true : false;

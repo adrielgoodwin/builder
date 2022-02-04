@@ -1,6 +1,7 @@
 import 'package:builder/builder/models/field_data.dart';
 import '../../colors/colors.dart';
 import 'package:flutter/material.dart';
+import '../../MetaWidgetTreeBuilder/meta_widget_tree_builder.dart';
 
 /// models
 import '../../models/metaWidget.dart';
@@ -37,22 +38,15 @@ class WidgetMakerScreen extends StatefulWidget {
 }
 
 class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
-  ///
-  /// Setting new parameters
-  ///
-  /// 1. Have something highlighted
-  ///
 
   var metaWidgetParameters = MetaWidgetParameters();
-
-  /// Ok im going to make a tree and then im gonna solve it
 
   /// A map of meta tree items
   Map<String, MetaTreeItem> metaTreeItems = {
     /// The top of the widget tree
     "TopFlex": MetaTreeItem(
       parentId: '',
-      childrenBranches: ['TopRow', 'TopRowFlexColumn1', 'TopRowFlexColumn2'],
+      childrenBranches: ['TopRow', 'Column1', 'Column2'],
       children: [''],
       id: 'TopFlex',
       metaWidgetEnum: MetaWidgets.flexible,
@@ -64,9 +58,9 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     "TopRow": MetaTreeItem(
       parentId: 'TopFlex',
       children: [],
-      childrenBranches: ['TopRowFlex2Column', 'TopRowFlex1Column'],
+      childrenBranches: ['Column2', 'Column1'],
       id: 'TopRow',
-      metaWidgetEnum: MetaWidgets.row,
+      metaWidgetEnum: MetaWidgets.column,
       hasChild: false,
       hasChildren: true,
     ),
@@ -75,7 +69,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     "TopRowFlex1": MetaTreeItem(
       parentId: 'TopRow',
       childrenBranches: [],
-      children: ['TopRowFlex1Column'],
+      children: ['Column1'],
       id: 'TopRowFlex1',
       metaWidgetEnum: MetaWidgets.flexible,
       hasChild: true,
@@ -86,32 +80,32 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     "TopRowFlex2": MetaTreeItem(
       parentId: 'TopRow',
       childrenBranches: [],
-      children: ['TopRowFlex2Column'],
+      children: ['Column2'],
       id: 'TopRowFlex2',
       metaWidgetEnum: MetaWidgets.flexible,
       hasChild: true,
       hasChildren: false,
     ),
-    "TopRowFlex1Column": MetaTreeItem(
+    "Column1": MetaTreeItem(
       parentId: 'TopRowFlex1',
       children: ["Text1"],
       childrenBranches: [],
-      id: 'TopRowFlex1Column',
+      id: 'Column1',
       metaWidgetEnum: MetaWidgets.column,
       hasChild: false,
       hasChildren: true,
     ),
-    "TopRowFlex2Column": MetaTreeItem(
+    "Column2": MetaTreeItem(
       parentId: 'TopRowFlex2',
       children: ['Text2'],
       childrenBranches: [],
-      id: 'TopRowFlex2Column',
+      id: 'Column2',
       metaWidgetEnum: MetaWidgets.column,
       hasChild: false,
       hasChildren: true,
     ),
     "Text2": MetaTreeItem(
-      parentId: 'TopRowFlex2Column',
+      parentId: 'Column2',
       childrenBranches: [],
       children: [],
       id: "Text2",
@@ -120,7 +114,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
       hasChildren: false,
     ),
     "Text1": MetaTreeItem(
-      parentId: 'TopRowFlex1Column',
+      parentId: 'Column1',
       childrenBranches: [],
       children: [],
       id: "Text1",
@@ -128,76 +122,21 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
       hasChild: false,
       hasChildren: false,
     ),
+    "Text13": MetaTreeItem(
+      parentId: 'Column1',
+      childrenBranches: [],
+      children: [],
+      id: "Text13",
+      metaWidgetEnum: MetaWidgets.text,
+      hasChild: false,
+      hasChildren: false,
+    ),
   };
-
-  // Step 1. build up to the most nearby fork
-  // Step 2. Put the metaWidget in the consolidation map
-  // Step 3. check if all siblings are built
-  // Step 4. if not, make a pass and repeat this process
-  // would need to store somewhere all of this
-  // build up returns a meta widget, so maybe a new map could work
-  // where the key is the parent id that the meta widget wants and the value is itself
-
-  // What we want to do next then is make 'passes'?
-  // We need each intersection to 'know' its parens that are intersections
-  // The pass is a check to see which intersection can be consolidated
-  // so the intersection checks to see if any of its descendant id's are themselves intersections
-
-  /// store all 'completed branches' In a Map, with their top id and complete MetaWidget
-
-  /// a function that will 'merge' the metaWidgets together into a tree
-  MetaWidget assembleTree() {
-    /// Get all the tips, or end widgets with no children
-    var branchTips = metaTreeItems.values.where((element) => element.hasChild == false && element.hasChildren == false);
-
-    /// make a list to hold onto the MetaWidgets who need consolidation
-    List<MetaWidgetWithParent> consolidationList = [];
-
-    /// loop over tips to build up to nearest branch
-    for (var tip in branchTips) {
-      late MetaWidget metaWidget;
-
-      /// Check to see which type it is, get the appropriate parameters, and set the metaWidget
-      if (tip.metaWidgetEnum == MetaWidgets.flexible) {
-        metaWidget = metaWidgetMap[tip.metaWidgetEnum]!(metaWidgetParameters.flexParams['base']);
-      } else if (tip.metaWidgetEnum == MetaWidgets.text) {
-        metaWidget = metaWidgetMap[tip.metaWidgetEnum]!(metaWidgetParameters.textParams['base']);
-      }
-
-      /// here, buildUp will put each child into their parent until a branch is reached.
-      /// At that point it returns the latest MetaWidget, with its children consolidated,
-      /// grouped with its parent MetaTreeItem (that's a branch)
-      MetaWidgetWithParent metaWidgetWithParent = buildUp(metaTreeItems[tip.parentId]!, metaWidget);
-      print("MetaWidget parent id from tip buildUp: ${metaWidgetWithParent.parent.id}");
-
-      /// This MetaWidgetWithParent is added to the consolidation list for further consolidation
-      consolidationList.add(metaWidgetWithParent);
-    }
-
-    /// Consolidate all until the top widget is reached
-    List<MetaWidgetWithParent> completedConsolidation = consolidate(consolidationList);
-
-    /// Return that final widget
-    return completedConsolidation[0].metaWidget;
-  }
-
-  var consolidationCount = 1;
 
   List<String> alreadyConsolidated = [];
 
-
-
-  bool isBranch(MetaTreeItem mti) {
-    if (mti.metaWidgetEnum == MetaWidgets.column || mti.metaWidgetEnum == MetaWidgets.row) {
-      if (mti.children.isEmpty) {
-        false;
-      }
-      return true;
-    }
-    return false;
-  }
-
-
+  /// check if MetaTreeItem is a branch
+  bool isBranch(MetaTreeItem mti) => mti.metaWidgetEnum == MetaWidgets.column || mti.metaWidgetEnum == MetaWidgets.row ? true : false;
 
   late FieldData fieldForUse;
 
@@ -216,13 +155,14 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
           flex: 1,
           child: buildSidebar(state),
         ),
-        assembleTree().build(),
+        assembleTree(metaTreeItems, metaWidgetParameters).build(),
+        metaWidgetTest.build(),
       ]),
     );
   }
 
   Widget buildSidebar(ClassMakerProvider state) {
-    var metaWidgey = assembleTree();
+    var metaWidgey = assembleTree(metaTreeItems, metaWidgetParameters);
     print(metaWidgey);
 
     // var uuid = Uuid();
