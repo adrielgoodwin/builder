@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../models/field_data.dart';
+import '../models/class_data.dart';
+import '../extensions.dart';
 
 enum MetaWidgets { row, column, flexible, singleChildScroll, text, container, wrap, visibility }
 
@@ -39,27 +41,72 @@ MetaFlexibleParams mfp = MetaFlexibleParams(child: mr);
 
 MetaWidget metaWidgetTest = MetaFlexible(mfp);
 
+WidgetBuilderWithData wbwd = WidgetBuilderWithData(
+  nameOfWidget: 'coolWidget',
+  topWidget: metaWidgetTest,
+  classesInUse: [ClassData(name: 'User', id: 'id', fieldData: [], neededImports: [])],
+);
+
+void main() {
+  print(wbwd.writeAsString());
+}
+
+class WidgetBuilderWithData {
+  WidgetBuilderWithData({required this.nameOfWidget, required this.topWidget, required this.classesInUse});
+
+  String nameOfWidget;
+  MetaWidget topWidget;
+  List<ClassData> classesInUse;
+
+  String writeAsString() {
+    String constructorFields = classesInUse.map((e) => "required ${e.name}").toList().join(", ");
+    String fields = classesInUse.map((e) => '  final ${e.name} ${e.name.deCapitalize()};').join('\n');
+    String imports = classesInUse.map((e) => '  import"../data_classes/${e.name}.dart";').join('\n');
+    return '''$imports
+class $nameOfWidget extends StatelessWidget {
+  $nameOfWidget({$constructorFields});
+  
+  $fields
+
+  @override
+  Widget build(BuildContext context) {
+    return ${topWidget.writeAsString()};
+  }
+}    
+''';
+  }
+}
+
 /// This class is a container for our MetaWidget parameters.
 /// When we add a MetaWidget into the 'tree' we will give it some
 /// parameters, which we store here and associate with an id
 class MetaWidgetParameters {
+
   Map<String, MetaFlexibleParams> flexParams = {
     'base': MetaFlexibleParams(),
     'id2': MetaFlexibleParams(),
   };
+
+  void setFlexParams(String id, MetaFlexibleParams p) => flexParams[id] = p;
 
   Map<String, MetaTextParams> textParams = {
     'base': MetaTextParams(),
     'id2': MetaTextParams(),
   };
 
+  void setTextParams(String id, MetaTextParams p) => textParams[id] = p;
+
   Map<String, MetaRowParams> rowParams = {
     'base': MetaRowParams(),
   };
 
+  void setRowParams(String id, MetaRowParams p) => rowParams[id] = p;
+
   Map<String, MetaColumnParams> columnParams = {
     'base': MetaColumnParams(),
   };
+
+  void setColumnParams(String id, MetaColumnParams p) => columnParams[id] = p;
 
 }
 
@@ -79,13 +126,22 @@ class MetaWidget {
   const MetaWidget();
 
   Widget build() => Row();
+
+  String writeAsString() => "";
 }
 
 /// MetaTreeItem is a store for each MetaWidget data.
 /// From this we are able to build up our tree with the
 /// necessary data
 class MetaTreeItem {
-  MetaTreeItem({required this.parentId, required this.children, required this.id, required this.childrenBranches, required this.metaWidgetEnum, required this.hasChildren, required this.hasChild});
+  MetaTreeItem(
+      {required this.parentId,
+      required this.children,
+      required this.id,
+      required this.childrenBranches,
+      required this.metaWidgetEnum,
+      required this.hasChildren,
+      required this.hasChild});
 
   final String id;
   final String parentId;
@@ -96,11 +152,9 @@ class MetaTreeItem {
   final bool hasChild;
 }
 
-
 ///
 /// MetaWidgets that actually display something, final Widgets with no children
 ///
-
 
 class MetaTextStyle {
   const MetaTextStyle({this.fontSize = 12});
@@ -130,60 +184,24 @@ class MetaText extends MetaWidget {
 
   final MetaTextParams mtp;
 
-  String text = "oldText";
-
-  void setText(String newText) {
-    text = newText;
-  }
-
   @override
   Widget build() {
     if (mtp.fieldData != null) {
-      return GestureDetector(
-        onTap: () => isSelected = !isSelected,
-        child: Container(
-          decoration: BoxDecoration(
-            border: isSelected ? Border.all(color: Colors.teal) : Border.all(color: Colors.white30),
-          ),
-          child: Text(mtp.fieldData!.name, style: mtp.textStyle.build()),
-        ),
-      );
+      return Text(mtp.fieldData!.name, style: mtp.textStyle.build());
     } else {
-      return GestureDetector(
-        onTap: () {isSelected = !isSelected;
-          text = "niceBoy";
-        },
-        child: Container(child: Text(text, style: mtp.textStyle.build()), decoration: BoxDecoration(
-          border: isSelected ? Border.all(color: Colors.teal) : Border.all(color: Colors.white30),
-        ),
-        ),
-      );
+      return Text("A text field", style: mtp.textStyle.build());
     }
   }
 
-  String writeWidgetAtString() {
-    return 'Text(\${${mtp.fieldData!.parentClass}.${mtp.fieldData!.name}}, style: ${mtp.textStyle.writeAsString()}';
-  }
-}
-
-class MetaText2 extends MetaWidget {
-  MetaText2({this.text = "Your Text Here", this.className = "", this.fieldName = "", this.textStyle = const MetaTextStyle()});
-
-  String className;
-  String fieldName;
-  String text;
-  MetaTextStyle textStyle;
-
   @override
-  Widget build() {
-    return Text(text, style: textStyle.build());
-  }
-
-  String writeWidgetAtString() {
-    return 'Text($className.$fieldName, style: ';
+  String writeAsString() {
+    if (mtp.fieldData != null) {
+      return 'Text(\${${mtp.fieldData!.parentClass}.${mtp.fieldData!.name}}, style: ${mtp.textStyle.writeAsString()}';
+    } else {
+      return 'Text("TextWidget", style: ${mtp.textStyle.writeAsString()}';
+    }
   }
 }
-
 
 ///
 /// MetaWidgets that branch
@@ -216,6 +234,21 @@ class MetaRow extends MetaWidget {
       crossAxisAlignment: mrp.crossAxisAlignment,
     );
   }
+
+  @override
+  String writeAsString() {
+    List<String> children = mrp.children.map((e) => e.writeAsString()).toList();
+    String joinedChildren = children.join(", \n");
+    return '''
+    Row(
+      children: [
+        $joinedChildren
+      ],
+      mainAxisAlignment: mrp.mainAxisAlignment,
+      crossAxisAlignment: mrp.crossAxisAlignment,
+    );
+    ''';
+  }
 }
 
 class MetaColumnParams {
@@ -232,6 +265,7 @@ class MetaColumnParams {
 
 class MetaColumn extends MetaWidget {
   MetaColumn(this.params);
+
   final MetaColumnParams params;
 
   @override
@@ -243,7 +277,6 @@ class MetaColumn extends MetaWidget {
     );
   }
 }
-
 
 ///
 /// MetaWidgets that are containers
@@ -277,6 +310,16 @@ class MetaFlexible extends MetaWidget {
       flex: mfp.flex,
       child: mfp.child.build(),
     );
+  }
+
+  @override
+  String writeAsString() {
+    return '''
+    Flexible(
+      flex: ${mfp.flex},
+      child: ${mfp.child.writeAsString()},
+    ); 
+    ''';
   }
 }
 
