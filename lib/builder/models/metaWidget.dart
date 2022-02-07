@@ -19,15 +19,7 @@ enum MetaWidgets { row, column, flexible, singleChildScroll, text, container, wr
 /// gridview
 ///
 
-/// This class is for the consolidation process.
-/// Once we build up to a branching point, we need to store
-/// the MetaWidget at that point, along with its parent MetaTreeItem
-class MetaWidgetWithParent {
-  final MetaTreeItem parent;
-  final MetaWidget metaWidget;
 
-  MetaWidgetWithParent(this.metaWidget, this.parent);
-}
 
 MetaTextParams mtp = MetaTextParams();
 
@@ -114,7 +106,7 @@ class MetaWidgetParameters {
 var mwp = MetaWidgetParameters();
 
 /// Builder map
-Map<MetaWidgets, Function> metaWidgetMap = {
+Map<MetaWidgets, Function> widgetBuilderMap = {
   MetaWidgets.flexible: (MetaFlexibleParams flexParams) => MetaFlexible(flexParams),
   MetaWidgets.text: (MetaTextParams textParams) => MetaText(textParams),
   MetaWidgets.row: (MetaRowParams metaRowParams) => MetaRow(metaRowParams),
@@ -130,27 +122,7 @@ class MetaWidget {
   String writeAsString() => "";
 }
 
-/// MetaTreeItem is a store for each MetaWidget data.
-/// From this we are able to build up our tree with the
-/// necessary data
-class MetaTreeItem {
-  MetaTreeItem(
-      {required this.parentId,
-      required this.children,
-      required this.id,
-      required this.childrenBranches,
-      required this.metaWidgetEnum,
-      required this.hasChildren,
-      required this.hasChild});
 
-  final String id;
-  final String parentId;
-  final List<String> children;
-  final MetaWidgets metaWidgetEnum;
-  final List<String> childrenBranches;
-  final bool hasChildren;
-  final bool hasChild;
-}
 
 ///
 /// MetaWidgets that actually display something, final Widgets with no children

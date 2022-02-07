@@ -8,6 +8,14 @@ import 'builder/state/meta_widget_builder_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'builder/write_files_api.dart';
 
+// every one of these lines of code is a file, providing us with entire sets of code to be referenced here
+// in our own code :) This alone gives us so much power. The power of modularity, the power of dexterity,
+// the power of re-usability, and sharing.
+
+// right here whats imported is some classes we use to easily store the data we would like to use in our application
+// We know the computer runs on simple commands so the classes act as a way to speak clearly and efficiently to store
+// and retrieve what we want to.
+
 /// models
 import 'builder/models/class_data.dart';
 import 'builder/models/field_data.dart';
@@ -15,11 +23,16 @@ import 'builder/models/registry.dart';
 
 import 'builder/models/tabItemData.dart';
 import 'builder/models/page_data.dart';
+import 'builder/MetaWidgetTreeBuilder/meta_tree.dart';
+import 'builder/models/metaWidget.dart';
 
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
 void main() {
+
+  var y = FlexibleMTI(parentId: 'id', params: MetaFlexibleParams(), id: "flexible_");
+  print("Runtime type: ${y.runtimeType.toString()}");
 
   var uuid = Uuid();
 
