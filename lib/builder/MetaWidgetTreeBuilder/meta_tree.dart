@@ -8,6 +8,9 @@ import 'package:uuid/uuid.dart';
 ///    consolidate and give to parent branch
 /// 3. return final metaWidget for building
 
+/// Such sentiment
+/// https://www.youtube.com/watch?v=gUUH8xzu41s&ab_channel=Vanilla
+
 class MetaTree {
 
   Map<String, ForkPoint> forkPoints = {};
@@ -16,18 +19,40 @@ class MetaTree {
 
   Map<String, Leaf> leafs = {};
 
-  void buildLeafsUpwards() {
-    for(var leaf in leafs.values) {
-      forkPoints[leaf.parentBranch]!.children.add(buildUp(leaf.build(), par))
+  List<String> forkBuildOrder = [];
+
+  late MetaWidget topMetaWidget;
+
+  MetaWidget build() {
+    buildLeafsUpwards();
+    for(var forkKey in forkBuildOrder) {
+      buildForkAndBeyond(forkKey);
     }
+    return topMetaWidget;
   }
 
   MetaWidget buildUp(MetaWidget childNode, BranchNode parentNode) {
     parentNode.child = childNode;
-    if(parentNode.parentBranch == parentNode.parentId) {
+    if (parentNode.parentBranch == parentNode.parentId) {
       return parentNode.build();
-    } else {
+    }
+    if (parentNode.parentId.isNotEmpty) {
       return buildUp(parentNode.build(), branchNodes[parentNode.parentId]!);
+    }
+    return parentNode.build();
+  }
+
+  void buildLeafsUpwards() {
+    for (var leaf in leafs.values) {
+      forkPoints[leaf.parentBranch]!.children.add(buildUp(leaf.build(), branchNodes[leaf.parentId]!));
+    }
+  }
+
+  void buildForkAndBeyond(String forkKey) {
+    if(forkPoints.isNotEmpty) {
+      forkPoints[forkPoints[forkKey]!.parentBranch]!.children.add(buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!));
+    } else {
+      topMetaWidget = buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!);
     }
   }
 
@@ -37,10 +62,12 @@ class MetaTree {
 
 class ForkPoint {
 
-  ForkPoint({required this.id, required this.parentId, this.children = const []});
+  ForkPoint({required this.id, required this.parentId, required this.parentBranch, required this.placeInOrder, this.children = const []});
 
   final String id;
   final String parentId;
+  final String parentBranch;
+  int placeInOrder;
   List<MetaWidget> children;
 
   MetaWidget build() {
@@ -51,7 +78,8 @@ class ForkPoint {
 
 class RowFork extends ForkPoint {
 
-  RowFork({required String parentId, required String id, required this.params, required List<MetaWidget> children}) : super(id: id, parentId: parentId, children: children);
+  RowFork({required String parentId, required int placeInOrder, required String id, required String parentBranch, required this.params, required List<MetaWidget> children})
+      : super(id: id, parentId: parentId, placeInOrder: placeInOrder, parentBranch: parentBranch, children: children);
 
   MetaRowParams params;
 
@@ -77,7 +105,8 @@ class BranchNode {
 
 class FlexibleNode extends BranchNode {
 
-  FlexibleNode({required String parentId, required String id, required String parentBranch, required this.params, required MetaWidget child}) : super(id: id, parentId: parentId, child: child, parentBranch: parentBranch);
+  FlexibleNode({required String parentId, required String id, required String parentBranch, required this.params, required MetaWidget child})
+      : super(id: id, parentId: parentId, child: child, parentBranch: parentBranch);
 
   MetaFlexibleParams params;
 
@@ -148,7 +177,6 @@ class MTIWithChild extends MTI {
 }
 
 
-
 class FlexibleMTI extends MTI {
   FlexibleMTI({required String parentId, required this.params, required String id}) : super(id: id, parentId: parentId);
 
@@ -174,7 +202,6 @@ var buildUpIteration = 1;
 
 /// This function is for building up single child branches until it reaches a fork
 MetaWidget buildUp(MTI parent, MetaWidget childMetaWidget) {
-
   print("Build up iteration: $buildUpIteration");
   buildUpIteration += 1;
 
