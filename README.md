@@ -16,6 +16,7 @@ Mas Tarde
 3. provider composer
 
 ### ClassMaking
+Priority
 1. Make sure its running smoothly
 
 ### WidgetBuilding
@@ -37,8 +38,14 @@ Priority
  d) those changes are changes to the parameters of whatever the widget is
  e) if it is a leaf, then it will have the 'select data' option
  
+4. Make a bunch of text styles, display as buttons for choosing style
+5. Highlighting:
+ a) When highlighting a row, highlight siblings and parent in different colors
+ b) mode to highlight everything all the time, rows one color, columns another, flexes another
+ 
 Mas Tarde
 1. A very nice interface
+2. Make a function to take classes from docs and turn into metaWidgets
 
 ### PageBuilding
 1. 

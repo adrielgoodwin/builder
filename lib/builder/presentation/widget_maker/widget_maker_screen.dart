@@ -1,5 +1,6 @@
 import 'package:builder/builder/models/field_data.dart';
-import 'package:builder/builder/presentation/widget_maker/column_paramaters.dart';
+import 'package:builder/builder/presentation/widget_maker/column_parameters.dart';
+import 'package:builder/builder/presentation/widget_maker/row_parameters.dart';
 import 'package:builder/builder/state/meta_widget_builder_provider.dart';
 import '../../colors/colors.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import '../../write_files_api.dart';
 import '../../MetaWidgetTreeBuilder/meta_tree.dart';
 
 /// models
-import '../../models/metaWidget.dart';
 import '../../models/class_data.dart';
 
 /// state
@@ -69,20 +69,20 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
 
     var metaTree = MetaTree();
 
-    metaTree.addBranch(flexNode1);
-    metaTree.addBranch(flexNode2);
-    metaTree.addBranch(flexNode3);
-    metaTree.addBranch(flexNode4);
-    metaTree.addBranch(flexNode5);
-    metaTree.addBranch(flexNode6);
+    metaTree.addUpdateBranch(flexNode1);
+    metaTree.addUpdateBranch(flexNode2);
+    metaTree.addUpdateBranch(flexNode3);
+    metaTree.addUpdateBranch(flexNode4);
+    metaTree.addUpdateBranch(flexNode5);
+    metaTree.addUpdateBranch(flexNode6);
 
-    metaTree.addFork(rowFork1);
-    metaTree.addFork(column1);
-    metaTree.addFork(column2);
+    metaTree.addUpdateFork(rowFork1);
+    metaTree.addUpdateFork(column1);
+    metaTree.addUpdateFork(column2);
 
-    metaTree.addLeaf(text1);
-    metaTree.addLeaf(text2);
-    metaTree.addLeaf(text3);
+    metaTree.addUpdateLeaf(text1);
+    metaTree.addUpdateLeaf(text2);
+    metaTree.addUpdateLeaf(text3);
 
     metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
 
@@ -156,7 +156,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
                 ))
           ],
         ),
-        hasInit ? ColumnParameters(columnFork: metaTree.forkPoints['col1']! as ColumnFork) : SizedBox(),
+        hasInit ? RowParameters(rowFork: metaTree.forkPoints['row1']! as RowFork) : SizedBox(),
         Flexible(
           flex: 2,
           child: Text("Widget Tree"),

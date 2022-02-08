@@ -3,7 +3,6 @@
 import 'package:builder/builder/models/class_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import '../models/metaWidget.dart';
 import '../MetaWidgetTreeBuilder/meta_tree.dart';
 
 class MetaWidgetBuilderProvider with ChangeNotifier {
@@ -47,7 +46,7 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
   Widget _builtTree = const SizedBox();
 
   void setMetaFork(ForkPoint forkPoint) {
-    metaTree.addFork(forkPoint);
+    metaTree.addUpdateFork(forkPoint);
     rebuildTree();
   }
 

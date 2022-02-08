@@ -19,7 +19,7 @@ enum MetaWidgets { row, column, flexible, singleChildScroll, text, container, wr
 /// gridview
 ///
 
-
+// Make highlight enums and values for Columns
 
 MetaTextParams mtp = MetaTextParams();
 
@@ -124,9 +124,20 @@ class MetaWidget {
 
 
 
-///
-/// MetaWidgets that actually display something, final Widgets with no children
-///
+///text))/((/))/(())/((/))/((/))/((/))
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+                  ///
+
 
 class MetaTextStyle {
   const MetaTextStyle({this.fontSize = 12});
@@ -177,7 +188,13 @@ class MetaText extends MetaWidget {
 
 ///
 /// MetaWidgets that branch
-///
+
+enum RowSelectedState { selected, parentSelected, notSelected }
+
+Map<RowSelectedState, Color> rowSelectedColors = {
+  RowSelectedState.selected: Colors.green,
+  RowSelectedState.parentSelected: Colors.blueAccent,
+};
 
 class MetaRowParams {
   MetaRowParams({
@@ -185,12 +202,20 @@ class MetaRowParams {
     this.id = "defaultId",
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.selectedState = RowSelectedState.notSelected,
   });
 
   String id;
   List<MetaWidget> children;
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;
+  RowSelectedState selectedState;
+}
+
+class ChangeMainAxisAlignmentIntent extends Intent {
+  const ChangeMainAxisAlignmentIntent(this.forkId, this.mainAxisAlignment);
+  final MainAxisAlignment mainAxisAlignment;
+  final String forkId;
 }
 
 class MetaRow extends MetaWidget {
@@ -200,10 +225,13 @@ class MetaRow extends MetaWidget {
 
   @override
   Widget build() {
-    return Row(
-      children: mrp.children.map((e) => e.build()).toList(),
-      mainAxisAlignment: mrp.mainAxisAlignment,
-      crossAxisAlignment: mrp.crossAxisAlignment,
+    return Container(
+      decoration: BoxDecoration(border: Border.all(), color: rowSelectedColors[mfp.selectedState]),
+      child: Row(
+        children: mrp.children.map((e) => e.build()).toList(),
+        mainAxisAlignment: mrp.mainAxisAlignment,
+        crossAxisAlignment: mrp.crossAxisAlignment,
+      ),
     );
   }
 
@@ -223,18 +251,37 @@ class MetaRow extends MetaWidget {
   }
 }
 
+        ///))/((/))\\\
+     ///           /((/)
+  ///
+///
+///
+///
+ ///
+   ///
+      ///))/Column/((/))
+
+
+enum ColumnSelectedState { selected, parentSelected, notSelected }
+
+Map<ColumnSelectedState, Color> columnSelectedColors = {
+  ColumnSelectedState.selected: Colors.green,
+  ColumnSelectedState.parentSelected: Colors.blueAccent,
+};
+
 class MetaColumnParams {
   MetaColumnParams({
     this.children = const [],
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.selectedState = ColumnSelectedState.notSelected
   });
 
+  ColumnSelectedState selectedState;
   List<MetaWidget> children;
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;
 }
-
 class MetaColumn extends MetaWidget {
   MetaColumn(this.params);
 
@@ -242,10 +289,13 @@ class MetaColumn extends MetaWidget {
 
   @override
   Widget build() {
-    return Column(
-      children: params.children.map((e) => e.build()).toList(),
-      mainAxisAlignment: params.mainAxisAlignment,
-      crossAxisAlignment: params.crossAxisAlignment,
+    return Container(
+      decoration: BoxDecoration(border: Border.all(), color: columnSelectedColors[mfp.selectedState]),
+      child: Column(
+        children: params.children.map((e) => e.build()).toList(),
+        mainAxisAlignment: params.mainAxisAlignment,
+        crossAxisAlignment: params.crossAxisAlignment,
+      ),
     );
   }
 }
@@ -254,22 +304,36 @@ class MetaColumn extends MetaWidget {
 /// MetaWidgets that are containers
 ///
 
-class MetaSizedBox extends MetaWidget {
-  const MetaSizedBox();
 
-  @override
-  Widget build() {
-    return const SizedBox();
-  }
-}
 
+///))/((/))/((/))/((/))
+///
+///
+///
+///))/Flexible/((/))
+///
+///
+///
+///
+///
 class MetaFlexibleParams {
-  MetaFlexibleParams({this.flex = 1, this.id = "defaultId", this.child = const MetaSizedBox()});
+  MetaFlexibleParams({this.flex = 1, this.id = "defaultId", this.selectedState = FlexibleSelectedState.notSelected, this.child = const MetaSizedBox()});
 
+  FlexibleSelectedState selectedState;
   String id;
   final int flex;
   MetaWidget child;
 }
+
+enum FlexibleSelectedState { selected, siblingSelected, parentSelected, locked, notSelected }
+
+Map<FlexibleSelectedState, Color> flexibleSelectedColors = {
+  FlexibleSelectedState.selected: Colors.green,
+  FlexibleSelectedState.siblingSelected: Colors.blueAccent,
+  FlexibleSelectedState.parentSelected: Colors.blueAccent,
+  FlexibleSelectedState.locked: Colors.yellow,
+  FlexibleSelectedState.notSelected: Colors.white,
+};
 
 class MetaFlexible extends MetaWidget {
   MetaFlexible(this.mfp);
@@ -278,9 +342,12 @@ class MetaFlexible extends MetaWidget {
 
   @override
   Widget build() {
-    return Flexible(
-      flex: mfp.flex,
-      child: mfp.child.build(),
+    return Container(
+      decoration: BoxDecoration(border: Border.all(), color: flexibleSelectedColors[mfp.selectedState]),
+      child: Flexible(
+        flex: mfp.flex,
+        child: mfp.child.build(),
+      ),
     );
   }
 
@@ -292,6 +359,15 @@ class MetaFlexible extends MetaWidget {
       child: ${mfp.child.writeAsString()},
     ); 
     ''';
+  }
+}
+
+class MetaSizedBox extends MetaWidget {
+  const MetaSizedBox();
+
+  @override
+  Widget build() {
+    return const SizedBox();
   }
 }
 

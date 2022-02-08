@@ -4,16 +4,16 @@ import '../../MetaWidgetTreeBuilder/meta_tree.dart';
 import '../../state/meta_widget_builder_provider.dart';
 import 'package:provider/provider.dart';
 
-class ColumnParameters extends StatefulWidget {
-  const ColumnParameters({Key? key, required this.columnFork}) : super(key: key);
+class RowParameters extends StatefulWidget {
+  const RowParameters({Key? key, required this.rowFork}) : super(key: key);
 
-  final ColumnFork columnFork;
+  final RowFork rowFork;
 
   @override
-  _ColumnParametersState createState() => _ColumnParametersState();
+  _RowParametersState createState() => _RowParametersState();
 }
 
-class _ColumnParametersState extends State<ColumnParameters> {
+class _RowParametersState extends State<RowParameters> {
   MainAxisAlignment mainAxisAlignment = MainAxisAlignment.spaceBetween;
   CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start;
 
@@ -58,13 +58,13 @@ class _ColumnParametersState extends State<ColumnParameters> {
                         "Main Axis Alignment",
                         style: titleStyle,
                       ),
-                      ...maOptions(metaBuilderState, widget.columnFork),
+                      ...maOptions(metaBuilderState, widget.rowFork),
                       Divider(),
                       Text(
                         "Cross Axis Alignment",
                         style: titleStyle,
                       ),
-                      ...xaOptions(metaBuilderState, widget.columnFork),
+                      ...xaOptions(metaBuilderState, widget.rowFork),
                     ],
                   ),
                 ),
@@ -76,7 +76,7 @@ class _ColumnParametersState extends State<ColumnParameters> {
                     height: 200,
                     width: double.infinity,
                     decoration: BoxDecoration(border: Border.all()),
-                    child: Column(
+                    child: Row(
                       mainAxisAlignment: mainAxisAlignment,
                       crossAxisAlignment: crossAxisAlignment,
                       children: [circle(), circle(), circle()],
@@ -91,7 +91,7 @@ class _ColumnParametersState extends State<ColumnParameters> {
     );
   }
 
-  List<Widget> xaOptions(MetaWidgetBuilderProvider mwbp, ColumnFork columnFork) {
+  List<Widget> xaOptions(MetaWidgetBuilderProvider mwbp, RowFork rowFork) {
     List<Widget> xaOptions = [];
     xa.forEach((key, value) {
       var widget = GestureDetector(
@@ -102,8 +102,8 @@ class _ColumnParametersState extends State<ColumnParameters> {
         onTap: () {
           setState(() {
             crossAxisAlignment = value;
-            columnFork.params.crossAxisAlignment = value;
-            mwbp.setMetaFork(columnFork);
+            rowFork.params.crossAxisAlignment = value;
+            mwbp.setMetaFork(rowFork);
           });
         },
       );
@@ -112,7 +112,7 @@ class _ColumnParametersState extends State<ColumnParameters> {
     return xaOptions;
   }
 
-  List<Widget> maOptions(MetaWidgetBuilderProvider mwbp, ColumnFork columnFork) {
+  List<Widget> maOptions(MetaWidgetBuilderProvider mwbp, RowFork rowFork) {
     List<Widget> maOptions = [];
     ma.forEach((key, value) {
       var widget = GestureDetector(
@@ -123,8 +123,8 @@ class _ColumnParametersState extends State<ColumnParameters> {
         onTap: () {
           setState(() {
             mainAxisAlignment = value;
-            columnFork.params.mainAxisAlignment = value;
-            mwbp.setMetaFork(columnFork);
+            rowFork.params.mainAxisAlignment = value;
+            mwbp.setMetaFork(rowFork);
           });
         },
       );
