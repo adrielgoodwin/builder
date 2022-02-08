@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_final_fields
 
 import 'package:builder/builder/models/class_data.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import '../models/metaWidget.dart';
+import '../MetaWidgetTreeBuilder/meta_tree.dart';
 
 class MetaWidgetBuilderProvider with ChangeNotifier {
 
@@ -34,122 +36,30 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
 
   String get widgetName => _widgetBuilderWithData.nameOfWidget;
 
-  // /// Tree Items
-  // Map<String, MetaTreeItem> _metaTreeItems = {
-  //   /// The top of the widget tree
-  //   "TopFlex": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: '',
-  //     childrenBranches: ['TopRow', 'Column1', 'Column2'],
-  //     children: [''],
-  //     id: 'TopFlex',
-  //     metaWidgetEnum: MetaWidgets.flexible,
-  //     hasChild: true,
-  //     hasChildren: false,
-  //   ),
-  //
-  //   /// The first child of the top flex
-  //   "TopRow": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'TopFlex',
-  //     children: [],
-  //     childrenBranches: ['Column2', 'Column1'],
-  //     id: 'TopRow',
-  //     metaWidgetEnum: MetaWidgets.row,
-  //     hasChild: false,
-  //     hasChildren: true,
-  //   ),
-  //
-  //   /// The first child of the Top row
-  //   "TopRowFlex1": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'TopRow',
-  //     childrenBranches: [],
-  //     children: ['Column1'],
-  //     id: 'TopRowFlex1',
-  //     metaWidgetEnum: MetaWidgets.flexible,
-  //     hasChild: true,
-  //     hasChildren: false,
-  //   ),
-  //
-  //   /// The second child of the top row
-  //   "TopRowFlex2": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'TopRow',
-  //     childrenBranches: [],
-  //     children: ['Column2'],
-  //     id: 'TopRowFlex2',
-  //     metaWidgetEnum: MetaWidgets.flexible,
-  //     hasChild: true,
-  //     hasChildren: false,
-  //   ),
-  //   "Column1": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'TopRowFlex1',
-  //     children: ["Text1"],
-  //     childrenBranches: [],
-  //     id: 'Column1',
-  //     metaWidgetEnum: MetaWidgets.column,
-  //     hasChild: false,
-  //     hasChildren: true,
-  //   ),
-  //   "Column2": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'TopRowFlex2',
-  //     children: ['Text2'],
-  //     childrenBranches: [],
-  //     id: 'Column2',
-  //     metaWidgetEnum: MetaWidgets.column,
-  //     hasChild: false,
-  //     hasChildren: true,
-  //   ),
-  //   "Text2": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'Column2',
-  //     childrenBranches: [],
-  //     children: [],
-  //     id: "Text2",
-  //     metaWidgetEnum: MetaWidgets.text,
-  //     hasChild: false,
-  //     hasChildren: false,
-  //   ),
-  //   "Text1": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'Column1',
-  //     childrenBranches: [],
-  //     children: [],
-  //     id: "Text1",
-  //     metaWidgetEnum: MetaWidgets.text,
-  //     hasChild: false,
-  //     hasChildren: false,
-  //   ),
-  //   "Text13": MetaTreeItem(
-  //     paramId: 'base',
-  //     parentId: 'Column1',
-  //     childrenBranches: [],
-  //     children: [],
-  //     id: "Text13",
-  //     metaWidgetEnum: MetaWidgets.text,
-  //     hasChild: false,
-  //     hasChildren: false,
-  //   ),
-  // };
-  //
-  // void changeMTIParamId(MetaTreeItem mti, String newId) {
-  //   _metaTreeItems[mti.id]!.paramId = newId;
-  //   notifyListeners();
-  // }
-  //
-  // Map<String, MetaTreeItem> get metaTreeItems => _metaTreeItems;
-  //
-  // void addMetaTreeItem(MetaTreeItem metaTreeItem) {
-  //   _metaTreeItems[metaTreeItem.id] = metaTreeItem;
-  //   notifyListeners();
-  // }
-  //
-  // void removeMetaTreeItem(MTI metaTreeItem) {
-  //   _metaTreeItems.remove(metaTreeItem.id);
-  // }
+
+
+  MetaTree metaTree = MetaTree();
+
+  MetaTree get getMetaTree => metaTree;
+
+  Widget get builtTree => _builtTree;
+
+  Widget _builtTree = const SizedBox();
+
+  void setMetaFork(ForkPoint forkPoint) {
+    metaTree.addFork(forkPoint);
+    rebuildTree();
+  }
+
+  void rebuildTree() {
+    _builtTree = metaTree.build().build();
+    notifyListeners();
+  }
+
+  void setMetaTree(MetaTree newMetaTree) {
+    metaTree = newMetaTree;
+    rebuildTree();
+  }
 
   /// Meta Widget Parameters
 

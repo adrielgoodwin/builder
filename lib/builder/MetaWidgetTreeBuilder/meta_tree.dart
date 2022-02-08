@@ -6,8 +6,6 @@ import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
 
-var metaTree = MetaTree();
-
 class MetaTree {
   Map<String, ForkPoint> forkPoints = {};
 
@@ -41,7 +39,12 @@ class MetaTree {
   ///-|    m e t a   w i d g e t    b u i l d i n g    |-]
    ///     /\     /\/     \/\     //\     //\/     /\
 
+  void reset() {
+    forkPoints.values.forEach((element) {element.children = [];});
+  }
+
   MetaWidget build() {
+    reset();
     buildLeafsUpwards();
     for (var forkKey in forkBuildOrder) {
       if(forkKey == forkBuildOrder[forkBuildOrder.length - 1]) {

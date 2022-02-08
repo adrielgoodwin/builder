@@ -1,4 +1,5 @@
 import 'package:builder/builder/models/field_data.dart';
+import 'package:builder/builder/presentation/widget_maker/column_paramaters.dart';
 import 'package:builder/builder/state/meta_widget_builder_provider.dart';
 import '../../colors/colors.dart';
 import 'package:flutter/material.dart';
@@ -22,15 +23,24 @@ class WidgetMakerScreen extends StatefulWidget {
 }
 
 class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
-  
-  late MetaTree metaTree;
-  
-  @override
-  void initState() {
-    super.initState();
+  late FieldData fieldForUse;
 
-    metaTree = MetaTree();
+  void setFieldForUse(FieldData fieldData) {
+    setState(() {
+      fieldForUse = fieldData;
+    });
+  }
 
+  void writeWidgetToFile(String fileText, String fileName) {
+    var ftw = FileToWrite(
+      name: fileName,
+      code: fileText,
+      fileLocation: Paths.widgets,
+    );
+    sendWriteRequest(ftw);
+  }
+
+  void buildTree(MetaWidgetBuilderProvider state) {
     String flex1Id = "flex1";
     String row1Id = "row1";
     String flex2Id = "flex2";
@@ -57,6 +67,8 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams());
     var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams());
 
+    var metaTree = MetaTree();
+
     metaTree.addBranch(flexNode1);
     metaTree.addBranch(flexNode2);
     metaTree.addBranch(flexNode3);
@@ -74,47 +86,53 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
 
     metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
 
+    state.setMetaTree(metaTree);
+
+    hasInit = true;
   }
 
-  late FieldData fieldForUse;
-
-  void setFieldForUse(FieldData fieldData) {
-    setState(() {
-      fieldForUse = fieldData;
-    });
-  }
-
-  void writeWidgetToFile(String fileText, String fileName) {
-    var ftw = FileToWrite(
-      name: fileName,
-      code: fileText,
-      fileLocation: Paths.widgets,
-    );
-    sendWriteRequest(ftw);
-  }
+  bool hasInit = false;
 
   @override
   Widget build(BuildContext context) {
-
     var classState = Provider.of<ClassMakerProvider>(context);
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
+
+    var builtTree = metaBuilderState.builtTree;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => writeWidgetToFile(metaBuilderState.widgetAsString, metaBuilderState.widgetName),
+        onPressed: () => {
+          buildTree(metaBuilderState)
+          // writeWidgetToFile(metaBuilderState.widgetAsString, metaBuilderState.widgetName);
+        },
       ),
       body: Row(children: [
         Flexible(
           flex: 1,
           child: buildSidebar(classState),
         ),
-        metaTree.build().build(),
+        Flexible(
+          flex: 3,
+            child: Center(
+                child: Material(
+          elevation: 22,
+          child: Container(
+            height: 500,
+            width: 300,
+            child: Column(
+              children: [builtTree],
+            ),
+          ),
+        ))),
       ]),
     );
   }
 
   Widget buildSidebar(ClassMakerProvider state) {
+    var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
+    var metaTree = metaBuilderState.getMetaTree;
     // var uuid = Uuid();
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -137,6 +155,11 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
                   color: Colors.green,
                 ))
           ],
+        ),
+        hasInit ? ColumnParameters(columnFork: metaTree.forkPoints['col1']! as ColumnFork) : SizedBox(),
+        Flexible(
+          flex: 2,
+          child: Text("Widget Tree"),
         ),
         const SizedBox(
           height: 22,
