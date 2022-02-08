@@ -31,34 +31,10 @@ import 'package:flutter/services.dart';
 
 void main() {
 
-  var y = FlexibleMTI(parentId: 'id', params: MetaFlexibleParams(), id: "flexible_");
-  print("Runtime type: ${y.runtimeType.toString()}");
-
   var uuid = Uuid();
 
   var id1 = uuid.v4();
   var id2 = uuid.v4();
-  //
-  // ClassData userClassData = ClassData(
-  //   fieldData: [
-  //     FieldData(type: 'String', name: 'firstName', description: 'The first name of a user', isAClass: false, isAList: false),
-  //     FieldData(type: 'String', name: 'lastName', description: 'The last name of a user', isAClass: false, isAList: false),
-  //   ],
-  //   name: 'User',
-  //   neededImports: [],
-  // );
-  //
-  // ClassData locationClassData = ClassData(
-  //   fieldData: [
-  //     FieldData(type: 'String', name: 'address', description: 'The written address', isAClass: false, isAList: false),
-  //     FieldData(type: 'double', name: 'latitude', description: 'The latitude', isAClass: false, isAList: false),
-  //     FieldData(type: 'double', name: 'longitude', description: 'The longitude', isAClass: false, isAList: false),
-  //   ],
-  //   name: 'Location',
-  //   neededImports: [],
-  // );
-
-  // List<ClassData> classes = [userClassData, locationClassData];
 
   var pages = [
     PageData(name: "page one", id: id1, tabItemData: TabItemData(id: id1, name: "Page one", icon: "icon"),),

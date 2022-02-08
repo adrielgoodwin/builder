@@ -1,18 +1,14 @@
 import '../models/metaWidget.dart';
 import 'package:uuid/uuid.dart';
 
-
-/// to assemble tree:
-/// 1. Build up all buildUp-ables
-/// 2. Following the order of branch building,
-///    consolidate and give to parent branch
-/// 3. return final metaWidget for building
-
 /// Such sentiment
 /// https://www.youtube.com/watch?v=gUUH8xzu41s&ab_channel=Vanilla
 
-class MetaTree {
+var uuid = const Uuid();
 
+var metaTree = MetaTree();
+
+class MetaTree {
   Map<String, ForkPoint> forkPoints = {};
 
   Map<String, BranchNode> branchNodes = {};
@@ -23,10 +19,37 @@ class MetaTree {
 
   late MetaWidget topMetaWidget;
 
+  ///     \/     \/\     /\/     \\/     \\/\     /\
+  ///-|    m e t a    t r e e    b u i l d i n g    |-]
+  ///     /\     /\/     \/\     //\     //\/     /\
+
+  void setBuildOrder(List<String> buildOrder) => forkBuildOrder = buildOrder;
+
+  void addFork(ForkPoint newForkPoint) {
+    forkPoints[newForkPoint.id] = newForkPoint;
+  }
+
+  void addBranch(BranchNode newBranchNode) {
+    branchNodes[newBranchNode.id] = newBranchNode;
+  }
+
+  void addLeaf(Leaf newLeaf) {
+    leafs[newLeaf.id] = newLeaf;
+  }
+
+   ///     \/     \/\     /\/     \\/     \\/\     /\
+  ///-|    m e t a   w i d g e t    b u i l d i n g    |-]
+   ///     /\     /\/     \/\     //\     //\/     /\
+
   MetaWidget build() {
     buildLeafsUpwards();
-    for(var forkKey in forkBuildOrder) {
-      buildForkAndBeyond(forkKey);
+    for (var forkKey in forkBuildOrder) {
+      if(forkKey == forkBuildOrder[forkBuildOrder.length - 1]) {
+        print("isTop, forkKey: $forkKey");
+        buildForkAndBeyond(forkKey, true);
+      } else {
+        buildForkAndBeyond(forkKey, false);
+      }
     }
     return topMetaWidget;
   }
@@ -43,54 +66,81 @@ class MetaTree {
   }
 
   void buildLeafsUpwards() {
+    int counter = 0;
     for (var leaf in leafs.values) {
-      forkPoints[leaf.parentBranch]!.children.add(buildUp(leaf.build(), branchNodes[leaf.parentId]!));
+      counter += 1;
+      print("amount of leafs: $counter");
+      forkPoints[leaf.parentBranch]!.addChild(buildUp(leaf.build(), branchNodes[leaf.parentId]!));
     }
   }
 
-  void buildForkAndBeyond(String forkKey) {
-    if(forkPoints.isNotEmpty) {
-      forkPoints[forkPoints[forkKey]!.parentBranch]!.children.add(buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!));
+  void buildForkAndBeyond(String forkKey, bool isTop) {
+    if (!isTop) {
+      forkPoints[forkPoints[forkKey]!.parentBranch]!.addChild(buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!));
     } else {
       topMetaWidget = buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!);
     }
   }
+}///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
 
-}
-
-/// FORKS
+///     ///
+/// /// /// ///
+///
+///  f o r k s
+///
+/// /// /// ///
 
 class ForkPoint {
-
-  ForkPoint({required this.id, required this.parentId, required this.parentBranch, required this.placeInOrder, this.children = const []});
+  ForkPoint({required this.id, required this.parentId, required this.parentBranch, this.children = const []});
 
   final String id;
   final String parentId;
   final String parentBranch;
-  int placeInOrder;
   List<MetaWidget> children;
+
+  void addChild(MetaWidget newChild) => children = [...children, newChild];
 
   MetaWidget build() {
     return const MetaWidget();
   }
-
 }
 
 class RowFork extends ForkPoint {
-
-  RowFork({required String parentId, required int placeInOrder, required String id, required String parentBranch, required this.params, required List<MetaWidget> children})
-      : super(id: id, parentId: parentId, placeInOrder: placeInOrder, parentBranch: parentBranch, children: children);
+  RowFork({required String parentId, required String id, required String parentBranch, required this.params})
+      : super(id: id, parentId: parentId, parentBranch: parentBranch);
 
   MetaRowParams params;
 
-  @override build() {
+  @override
+  build() {
     params.children = children;
     return MetaRow(params);
   }
 }
 
-class BranchNode {
+class ColumnFork extends ForkPoint {
+  ColumnFork({required String parentId, required String id, required String parentBranch, required this.params})
+      : super(id: id, parentId: parentId, parentBranch: parentBranch);
 
+  MetaColumnParams params;
+
+  @override
+  build() {
+    params.children = children;
+    return MetaColumn(params);
+  }
+}
+
+
+///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
+
+/// /// /// /// /// ///
+///    /   /   /   /
+///  b r a n c h e s
+///  /   /   /   /
+/// /// /// /// /// ///
+
+class BranchNode {
   BranchNode({required this.id, required this.parentId, required this.parentBranch, this.child = const MetaSizedBox()});
 
   final String id;
@@ -104,20 +154,25 @@ class BranchNode {
 }
 
 class FlexibleNode extends BranchNode {
-
-  FlexibleNode({required String parentId, required String id, required String parentBranch, required this.params, required MetaWidget child})
-      : super(id: id, parentId: parentId, child: child, parentBranch: parentBranch);
+  FlexibleNode({required String parentId, required String id, required String parentBranch, required this.params})
+      : super(id: id, parentId: parentId, parentBranch: parentBranch);
 
   MetaFlexibleParams params;
 
-  @override build() {
+  @override
+  build() {
     params.child = child;
     return MetaFlexible(params);
   }
-}
+} ///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
+
+         /// \\\
+      ///      \\\
+   /// l e a f s \\\
+   ///\\        //\\\
+         ///
 
 class Leaf {
-
   Leaf({required this.id, required this.parentBranch, this.parentId = ""});
 
   final String id;
@@ -127,98 +182,15 @@ class Leaf {
   MetaWidget build() {
     return const MetaWidget();
   }
-
 }
 
-
-var uuid = const Uuid();
-
-class MTI {
-  MTI({required this.id, required this.parentId});
-
-  final String id;
-  final String parentId;
-
-  MetaWidget buildMW() {
-    return const MetaWidget();
-  }
-}
-
-List<String> branchIds = [];
-
-Map<String, MTI> MTIs = {};
-
-void addTextMTI(String parentId) {
-  var y = TextMTI(id: "text_${uuid.v1().toString()}", parentId: parentId, params: MetaTextParams());
-  MTIs[y.id] = y;
-}
-
-void addFlexibleMTI(String parentId) {
-  var y = FlexibleMTI(parentId: parentId, params: MetaFlexibleParams(), id: "flexible_${uuid.v1().toString()}");
-  MTIs[y.id] = y;
-}
-
-class MTINoChild extends MTI {
-
-  MTINoChild({required String id, required String parentId}) : super(id: id, parentId: parentId);
-
-}
-
-class MTIWithChildren extends MTI {
-
-  MTIWithChildren({required String id, required String parentId}) : super(id: id, parentId: parentId);
-
-}
-
-class MTIWithChild extends MTI {
-
-  MTIWithChild({required String id, required String parentId}) : super(id: id, parentId: parentId);
-
-}
-
-
-class FlexibleMTI extends MTI {
-  FlexibleMTI({required String parentId, required this.params, required String id}) : super(id: id, parentId: parentId);
-
-  MetaFlexibleParams params;
-
-  @override buildMW() {
-    return MetaFlexible(params);
-  }
-}
-
-class TextMTI extends MTI {
-  TextMTI({required String parentId, required this.params, required String id}) : super (id: id, parentId: parentId);
+class TextLeaf extends Leaf {
+  TextLeaf({required String id, required String parentBranch, required String parentId, required  this.params}) : super(id: id, parentBranch: parentBranch, parentId: parentId);
 
   MetaTextParams params;
 
-  @override
-  MetaWidget buildMW() {
+  MetaWidget build() {
     return MetaText(params);
   }
-}
 
-var buildUpIteration = 1;
-
-/// This function is for building up single child branches until it reaches a fork
-MetaWidget buildUp(MTI parent, MetaWidget childMetaWidget) {
-  print("Build up iteration: $buildUpIteration");
-  buildUpIteration += 1;
-
-  /// Check if the parent is a branch, if so we do not build it we just return the MetaWidget
-  if (!branchIds.contains(parent.id)) {
-    String nextParentId = parent.parentId;
-    MetaWidget biggerMetaWidget =
-
-    /// Check if there is another parent.
-    /// If not, we have reached the very top of the tree and we return
-    if (nextParentId.isEmpty) {
-      return biggerMetaWidget;
-    } else {
-      return buildUp(MTIs[nextParentId]!, biggerMetaWidget);
-    }
-  } else {
-    print("Build up reached a branch: ${parent.id}");
-    return childMetaWidget;
-  }
 }

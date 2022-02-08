@@ -4,6 +4,7 @@ import '../../colors/colors.dart';
 import 'package:flutter/material.dart';
 import '../../MetaWidgetTreeBuilder/meta_widget_tree_builder.dart';
 import '../../write_files_api.dart';
+import '../../MetaWidgetTreeBuilder/meta_tree.dart';
 
 /// models
 import '../../models/metaWidget.dart';
@@ -21,6 +22,59 @@ class WidgetMakerScreen extends StatefulWidget {
 }
 
 class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
+  
+  late MetaTree metaTree;
+  
+  @override
+  void initState() {
+    super.initState();
+
+    metaTree = MetaTree();
+
+    String flex1Id = "flex1";
+    String row1Id = "row1";
+    String flex2Id = "flex2";
+    String flex3Id = "flex3";
+    String column1Id = "col1";
+    String column2Id = "col2";
+    String flex4Id = "flex4";
+    String flex5Id = "flex5";
+    String flex6Id = "flex6";
+    String text1Id = "text1";
+    String text2Id = "text2";
+    String text3Id = "text3";
+
+    var flexNode1 = FlexibleNode(parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams());
+    var rowFork1 = RowFork(parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams());
+    var flexNode2 = FlexibleNode(parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams());
+    var flexNode3 = FlexibleNode(parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams());
+    var column1 = ColumnFork(parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams());
+    var column2 = ColumnFork(parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams());
+    var flexNode4 = FlexibleNode(parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams());
+    var flexNode5 = FlexibleNode(parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams());
+    var flexNode6 = FlexibleNode(parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams());
+    var text1 = TextLeaf(id: text1Id, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams());
+    var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams());
+    var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams());
+
+    metaTree.addBranch(flexNode1);
+    metaTree.addBranch(flexNode2);
+    metaTree.addBranch(flexNode3);
+    metaTree.addBranch(flexNode4);
+    metaTree.addBranch(flexNode5);
+    metaTree.addBranch(flexNode6);
+
+    metaTree.addFork(rowFork1);
+    metaTree.addFork(column1);
+    metaTree.addFork(column2);
+
+    metaTree.addLeaf(text1);
+    metaTree.addLeaf(text2);
+    metaTree.addLeaf(text3);
+
+    metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
+
+  }
 
   late FieldData fieldForUse;
 
@@ -41,6 +95,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     var classState = Provider.of<ClassMakerProvider>(context);
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
 
@@ -54,8 +109,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
           flex: 1,
           child: buildSidebar(classState),
         ),
-        // assembleTree(metaTreeItems, metaWidgetParameters).build(),
-        // metaWidgetTest.build(),
+        metaTree.build().build(),
       ]),
     );
   }
