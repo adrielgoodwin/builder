@@ -47,23 +47,25 @@ class MetaTree {
   Map<String, BranchNode> getSiblingBranches(String id) {
     var parentId = branchNodes[id]!.parentId;
     Map<String, BranchNode> siblings = {};
-    branchNodes.values.where((y) => y.parentId == parentId).toList().forEach((y) => siblings[y.id] = y );
+    branchNodes.values.where((y) => y.parentId == parentId).toList().forEach((y) => siblings[y.id] = y);
     return siblings;
   }
 
-   ///     \/     \/\     /\/     \\/     \\/\     /\
+  ///     \/     \/\     /\/     \\/     \\/\     /\
   ///-|    m e t a   w i d g e t    b u i l d i n g    |-]
-   ///     /\     /\/     \/\     //\     //\/     /\
+  ///     /\     /\/     \/\     //\     //\/     /\
 
   void reset() {
-    forkPoints.values.forEach((element) {element.children = [];});
+    forkPoints.values.forEach((element) {
+      element.children = [];
+    });
   }
 
   MetaWidget build() {
     reset();
     buildLeafsUpwards();
     for (var forkKey in forkBuildOrder) {
-      if(forkKey == forkBuildOrder[forkBuildOrder.length - 1]) {
+      if (forkKey == forkBuildOrder[forkBuildOrder.length - 1]) {
         print("isTop, forkKey: $forkKey");
         buildForkAndBeyond(forkKey, true);
       } else {
@@ -100,7 +102,9 @@ class MetaTree {
       topMetaWidget = buildUp(forkPoints[forkKey]!.build(), branchNodes[forkPoints[forkKey]!.parentId]!);
     }
   }
-}///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
+}
+
+///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
 
 ///     ///
 /// /// /// ///
@@ -110,11 +114,12 @@ class MetaTree {
 /// /// /// ///
 
 class ForkPoint {
-  ForkPoint({required this.id, required this.parentId, required this.mwbp, required this.parentBranch, this.children = const []});
+  ForkPoint({required this.id, required this.focusNode, required this.parentId, required this.mwbp, required this.parentBranch, this.children = const []});
 
   final String id;
   final String parentId;
   final String parentBranch;
+  final FocusNode focusNode;
   List<MetaWidget> children;
   MetaWidgetBuilderProvider mwbp;
 
@@ -123,24 +128,52 @@ class ForkPoint {
   MetaWidget build() {
     return const MetaWidget();
   }
+
+  void addChildFlexible() {
+    var newFocusNode = FocusNode();
+    var newId = "flexible_${uuid.v4().toString()}";
+    var newFlexible = FlexibleNode(focusNode: newFocusNode, mwbp: mwbp, parentId: id, parentBranch: "", id: newId, params: MetaFlexibleParams(id: newId, focusNode: newFocusNode));
+    mwbp.metaTree.branchNodes[newId] = newFlexible;
+    mwbp.rebuildTree();
+  }
+
+  void requestFocus() {}
+
+  void setSelectedStateAsParent() {}
+
 }
 
 class RowFork extends ForkPoint {
-  RowFork({required String parentId, required MetaWidgetBuilderProvider mwbp, required String id, required String parentBranch, required this.params})
-      : super(id: id, parentId: parentId, mwbp: mwbp, parentBranch: parentBranch);
+  RowFork({required String parentId, required FocusNode focusNode, required MetaWidgetBuilderProvider mwbp, required String id, required String parentBranch, required this.params})
+      : super(id: id, parentId: parentId, mwbp: mwbp, focusNode: focusNode, parentBranch: parentBranch);
 
   MetaRowParams params;
+
 
   @override
   build() {
     params.children = children;
     return MetaRow(params, mwbp);
   }
+
+  @override
+  void requestFocus() {
+    params.selectedState = RowSelectedState.selected;
+    focusNode.requestFocus();
+    mwbp.rebuildTree();
+  }
+
+  @override
+  void setSelectedStateAsParent() {
+    params.selectedState = RowSelectedState.childrenSelected;
+    mwbp.rebuildTree();
+  }
+
 }
 
 class ColumnFork extends ForkPoint {
-  ColumnFork({required String parentId, required MetaWidgetBuilderProvider mwbp, required String id, required String parentBranch, required this.params})
-      : super(id: id, parentId: parentId, mwbp: mwbp, parentBranch: parentBranch);
+  ColumnFork({required String parentId, required FocusNode focusNode, required MetaWidgetBuilderProvider mwbp, required String id, required String parentBranch, required this.params})
+      : super(id: id, parentId: parentId, focusNode: focusNode, mwbp: mwbp, parentBranch: parentBranch);
 
   MetaColumnParams params;
 
@@ -149,8 +182,21 @@ class ColumnFork extends ForkPoint {
     params.children = children;
     return MetaColumn(params);
   }
-}
 
+  @override
+  void requestFocus() {
+    params.selectedState = ColumnSelectedState.selected;
+    focusNode.requestFocus();
+    mwbp.rebuildTree();
+  }
+
+  @override
+  void setSelectedStateAsParent() {
+    params.selectedState = ColumnSelectedState.childrenSelected;
+    // mwbp.rebuildTree();
+  }
+
+}
 
 ///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
 
@@ -161,22 +207,39 @@ class ColumnFork extends ForkPoint {
 /// /// /// /// /// ///
 
 class BranchNode {
-  BranchNode({required this.id, required this.mwbp, required this.parentId, required this.parentBranch, this.child = const MetaSizedBox()});
+  BranchNode({required this.id, required this.mwbp, required this.focusNode, required this.parentId, required this.parentBranch, this.child = const MetaSizedBox()});
 
   final String id;
   final String parentId;
   final String parentBranch;
+  final FocusNode focusNode;
   MetaWidget child;
   final MetaWidgetBuilderProvider mwbp;
 
   MetaWidget build() {
     return const MetaWidget();
   }
+
+  void requestFocus() {}
+
+  void addTextChild() {
+    var textId = "Text_${uuid.v4().toString()}";
+    var textLeaf = TextLeaf(id: textId, parentBranch: parentBranch, parentId: id, params: MetaTextParams(id: textId));
+    mwbp.addUpdateLeafs([textLeaf]);
+  }
+
 }
 
 class FlexibleNode extends BranchNode {
-  FlexibleNode({required String parentId, required MetaWidgetBuilderProvider mwbp, this.flexibleSelectedState = FlexibleSelectedState.notSelected, required String id, required String parentBranch, required this.params})
-      : super(id: id, parentId: parentId, mwbp: mwbp, parentBranch: parentBranch);
+  FlexibleNode({
+    required String parentId,
+    required FocusNode focusNode,
+    required MetaWidgetBuilderProvider mwbp,
+    this.flexibleSelectedState = FlexibleSelectedState.notSelected,
+    required String id,
+    required String parentBranch,
+    required this.params,
+  }) : super(id: id, parentId: parentId, focusNode: focusNode, mwbp: mwbp, parentBranch: parentBranch);
 
   MetaFlexibleParams params;
   FlexibleSelectedState flexibleSelectedState;
@@ -186,13 +249,38 @@ class FlexibleNode extends BranchNode {
     params.child = child;
     return MetaFlexible(params, mwbp);
   }
-} ///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
 
-         /// \\\
-      ///      \\\
-   /// l e a f s \\\
-   ///\\        //\\\
-         ///
+  @override
+  void requestFocus() {
+    mwbp.metaTree.forkPoints[parentId]!.setSelectedStateAsParent();
+    params.selectedState = FlexibleSelectedState.selected;
+    focusNode.requestFocus();
+    mwbp.rebuildTree();
+  }
+
+  void setSelectedState(FlexibleSelectedState newState) {
+    params.selectedState = newState;
+    mwbp.rebuildTree();
+  }
+
+  void toggleLockedState() {
+    if(params.selectedState == FlexibleSelectedState.selected) {
+      params.selectedState = FlexibleSelectedState.locked;
+    } else if (params.selectedState == FlexibleSelectedState.locked) {
+      params.selectedState = FlexibleSelectedState.selected;
+    }
+    mwbp.rebuildTree();
+  }
+
+}
+
+///  0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0 - 0
+
+/// \\\
+///      \\\
+/// l e a f s \\\
+///\\        //\\\
+///
 
 class Leaf {
   Leaf({required this.id, required this.parentBranch, this.parentId = ""});
@@ -207,14 +295,13 @@ class Leaf {
 }
 
 class TextLeaf extends Leaf {
-  TextLeaf({required String id, required String parentBranch, required String parentId, required  this.params}) : super(id: id, parentBranch: parentBranch, parentId: parentId);
+  TextLeaf({required String id, required String parentBranch, required String parentId, required this.params}) : super(id: id, parentBranch: parentBranch, parentId: parentId);
 
   MetaTextParams params;
 
   MetaWidget build() {
     return MetaText(params);
   }
-
 }
 
 enum MetaWidgets { row, column, flexible, singleChildScroll, text, container, wrap, visibility }
@@ -280,7 +367,6 @@ class MetaWidget {
 ///
 ///
 
-
 class MetaTextStyle {
   const MetaTextStyle({this.fontSize = 12});
 
@@ -296,8 +382,9 @@ class MetaTextStyle {
 }
 
 class MetaTextParams {
-  MetaTextParams({this.fieldData, this.textStyle = const MetaTextStyle()});
+  MetaTextParams({required this.id, this.fieldData, this.textStyle = const MetaTextStyle()});
 
+  final String id;
   FieldData? fieldData;
   MetaTextStyle textStyle;
 }
@@ -331,21 +418,25 @@ class MetaText extends MetaWidget {
 ///
 /// MetaWidgets that branch
 
-enum RowSelectedState { selected, parentSelected, notSelected }
+enum RowSelectedState { selected, parentSelected, notSelected, childrenSelected }
 
 Map<RowSelectedState, Color> rowSelectedColors = {
   RowSelectedState.selected: Colors.green,
   RowSelectedState.parentSelected: Colors.blueAccent,
+  RowSelectedState.notSelected: Colors.white30,
+  RowSelectedState.childrenSelected: Colors.purple,
 };
 
 class ChangeMainAxisAlignmentIntent extends Intent {
   const ChangeMainAxisAlignmentIntent(this.mainAxisAlignment, this.forkId);
+
   final MainAxisAlignment mainAxisAlignment;
   final String forkId;
 }
 
 class ChangeMainAxisAlignmentAction extends Action<ChangeMainAxisAlignmentIntent> {
   ChangeMainAxisAlignmentAction(this.mwbp);
+
   final MetaWidgetBuilderProvider mwbp;
 
   @override
@@ -353,9 +444,46 @@ class ChangeMainAxisAlignmentAction extends Action<ChangeMainAxisAlignmentIntent
     print("detected keypress");
     var rowFork = mwbp.metaTree.forkPoints[intent.forkId] as RowFork;
     rowFork.params.mainAxisAlignment = intent.mainAxisAlignment;
-    mwbp.setMetaFork(rowFork);
+    mwbp.addUpdateForks([rowFork]);
   }
 }
+
+class FocusFirstChildIntent extends Intent {
+  const FocusFirstChildIntent(this.id);
+
+  final String id;
+}
+
+class FocusFirstChildAction extends Action<FocusFirstChildIntent> {
+  FocusFirstChildAction(this.mwbp);
+
+  final MetaWidgetBuilderProvider mwbp;
+
+  @override
+  void invoke(FocusFirstChildIntent intent) {
+    var firstChildId = mwbp.metaTree.branchNodes.values.firstWhere((branchNode) => branchNode.parentId == intent.id).id;
+    mwbp.metaTree.branchNodes[firstChildId]!.requestFocus();
+  }
+}
+
+class AddChildIntent extends Intent {
+  const AddChildIntent(this.id);
+
+  final String id;
+}
+
+class AddChildAction extends Action<AddChildIntent> {
+  AddChildAction(this.mwbp);
+
+  final MetaWidgetBuilderProvider mwbp;
+
+  @override
+  void invoke(AddChildIntent intent) {
+    mwbp.metaTree.forkPoints[intent.id]!.addChildFlexible();
+  }
+}
+
+/// Add data to text fields
 
 class MetaRowParams {
   MetaRowParams({
@@ -364,10 +492,12 @@ class MetaRowParams {
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.selectedState = RowSelectedState.notSelected,
+    required this.focusNode,
   });
 
   String id;
   List<MetaWidget> children;
+  FocusNode focusNode;
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;
   RowSelectedState selectedState;
@@ -381,22 +511,28 @@ class MetaRow extends MetaWidget {
 
   @override
   Widget build() {
+    print("Row Params: SelectedState: ${params.selectedState}");
     return Shortcuts(
       shortcuts: <ShortcutActivator, Intent>{
         LogicalKeySet(LogicalKeyboardKey.keyZ): ChangeMainAxisAlignmentIntent(MainAxisAlignment.start, params.id),
-        LogicalKeySet(LogicalKeyboardKey.keyX): ChangeMainAxisAlignmentIntent(MainAxisAlignment.end, params.id),
-        LogicalKeySet(LogicalKeyboardKey.keyC): ChangeMainAxisAlignmentIntent(MainAxisAlignment.center, params.id),
-        LogicalKeySet(LogicalKeyboardKey.keyV): ChangeMainAxisAlignmentIntent(MainAxisAlignment.spaceEvenly, params.id),
-        LogicalKeySet(LogicalKeyboardKey.keyB): ChangeMainAxisAlignmentIntent(MainAxisAlignment.spaceBetween, params.id),
+        LogicalKeySet(LogicalKeyboardKey.keyX): ChangeMainAxisAlignmentIntent(MainAxisAlignment.center, params.id),
+        LogicalKeySet(LogicalKeyboardKey.keyC): ChangeMainAxisAlignmentIntent(MainAxisAlignment.spaceEvenly, params.id),
+        LogicalKeySet(LogicalKeyboardKey.keyV): ChangeMainAxisAlignmentIntent(MainAxisAlignment.spaceBetween, params.id),
+        LogicalKeySet(LogicalKeyboardKey.keyB): ChangeMainAxisAlignmentIntent(MainAxisAlignment.end, params.id),
+        LogicalKeySet(LogicalKeyboardKey.enter): FocusFirstChildIntent(params.id),
+        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyN): AddChildIntent(params.id),
       },
       child: Actions(
         actions: <Type, Action<Intent>>{
           ChangeMainAxisAlignmentIntent: ChangeMainAxisAlignmentAction(mwbp),
+          FocusFirstChildIntent: FocusFirstChildAction(mwbp),
+          AddChildIntent: AddChildAction(mwbp),
         },
         child: Focus(
+          focusNode: params.focusNode,
           autofocus: true,
           child: Container(
-            // decoration: params.selectedState == RowSelectedState.notSelected ? null : BoxDecoration(border: Border.all(), color: rowSelectedColors[params.selectedState]),
+            decoration: BoxDecoration(border: Border.all(width: 1, color: rowSelectedColors[params.selectedState]!)),
             child: Row(
               children: params.children.map((e) => e.build()).toList(),
               mainAxisAlignment: params.mainAxisAlignment,
@@ -434,27 +570,32 @@ class MetaRow extends MetaWidget {
 ///
 ///))/Column/((/))
 
-
-enum ColumnSelectedState { selected, parentSelected, notSelected }
+enum ColumnSelectedState { selected, parentSelected, notSelected, childrenSelected }
 
 Map<ColumnSelectedState, Color> columnSelectedColors = {
-  ColumnSelectedState.selected: Colors.green,
+  ColumnSelectedState.selected: Colors.red,
   ColumnSelectedState.parentSelected: Colors.blueAccent,
+  ColumnSelectedState.notSelected: Colors.white,
+  ColumnSelectedState.childrenSelected: Colors.purple,
 };
 
 class MetaColumnParams {
-  MetaColumnParams({
-    this.children = const [],
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.selectedState = ColumnSelectedState.notSelected
-  });
+  MetaColumnParams(
+      {this.children = const [],
+        required this.focusNode,
+        required this.id,
+      this.mainAxisAlignment = MainAxisAlignment.start,
+      this.crossAxisAlignment = CrossAxisAlignment.start,
+      this.selectedState = ColumnSelectedState.notSelected});
 
   ColumnSelectedState selectedState;
+  final FocusNode focusNode;
+  final String id;
   List<MetaWidget> children;
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;
 }
+
 class MetaColumn extends MetaWidget {
   MetaColumn(this.params);
 
@@ -463,7 +604,7 @@ class MetaColumn extends MetaWidget {
   @override
   Widget build() {
     return Container(
-      // decoration: BoxDecoration(border: Border.all(width: 1), color: columnSelectedColors[params.selectedState]),
+      decoration: BoxDecoration(border: Border.all(width: 1, color: columnSelectedColors[params.selectedState]!)),
       child: Column(
         children: params.children.map((e) => e.build()).toList(),
         mainAxisAlignment: params.mainAxisAlignment,
@@ -476,8 +617,6 @@ class MetaColumn extends MetaWidget {
 ///
 /// MetaWidgets that are containers
 ///
-
-
 
 ///))/((/))/((/))/((/))
 ///
@@ -500,22 +639,45 @@ Map<FlexibleSelectedState, Color> flexibleSelectedColors = {
   FlexibleSelectedState.notSelected: Colors.white,
 };
 
-class MetaFlexibleParams {
-  MetaFlexibleParams({this.flex = 7, this.id = "defaultId", this.selectedState = FlexibleSelectedState.notSelected, this.child = const MetaSizedBox()});
-
-  FlexibleSelectedState selectedState;
-  String id;
-  int flex;
-  MetaWidget child;
-}
-
 class IncreaseFlexibleAmountIntent extends Intent {
   const IncreaseFlexibleAmountIntent(this.flexibleId);
+
   final String flexibleId;
+}
+
+class DecreaseFlexibleAmountIntent extends Intent {
+  const DecreaseFlexibleAmountIntent(this.flexibleId);
+
+  final String flexibleId;
+}
+
+class FocusParentIntent extends Intent {
+  const FocusParentIntent(this.parentId);
+
+  final String parentId;
+}
+
+class ToggleFlexibleLockedStateIntent extends Intent {
+  const ToggleFlexibleLockedStateIntent(this.flexibleNodeId);
+
+  final String flexibleNodeId;
+}
+
+class ToggleFlexibleLockedStateAction extends Action<ToggleFlexibleLockedStateIntent> {
+  ToggleFlexibleLockedStateAction(this.mwbp);
+
+  final MetaWidgetBuilderProvider mwbp;
+
+  @override
+  void invoke(ToggleFlexibleLockedStateIntent intent) {
+    var fn = mwbp.metaTree.branchNodes[intent.flexibleNodeId]! as FlexibleNode;
+    fn.toggleLockedState();
+  }
 }
 
 class IncreaseFlexibleAmountAction extends Action<IncreaseFlexibleAmountIntent> {
   IncreaseFlexibleAmountAction(this.mwbp);
+
   final MetaWidgetBuilderProvider mwbp;
 
   @override
@@ -525,14 +687,56 @@ class IncreaseFlexibleAmountAction extends Action<IncreaseFlexibleAmountIntent> 
     flexibles.removeWhere((key, y) => y.flexibleSelectedState == FlexibleSelectedState.locked);
     var i = flexibles.values.length - 1;
     flexibles[intent.flexibleId]!.params.flex = flexibles[intent.flexibleId]!.params.flex + i;
-    for(var sibling in flexibles.values) {
-      if(sibling.id != intent.flexibleId) {
+    for (var sibling in flexibles.values) {
+      if (sibling.id != intent.flexibleId) {
         sibling.params.flex = sibling.params.flex - 1;
         flexibles[sibling.id] = sibling;
       }
     }
     mwbp.addUpdateBranches(flexibles.values.toList());
   }
+}
+
+class DecreaseFlexibleAmountAction extends Action<DecreaseFlexibleAmountIntent> {
+  DecreaseFlexibleAmountAction(this.mwbp);
+
+  final MetaWidgetBuilderProvider mwbp;
+
+  @override
+  void invoke(DecreaseFlexibleAmountIntent intent) {
+    print("keypressed");
+    Map<String, FlexibleNode> flexibles = mwbp.metaTree.getSiblingBranches(intent.flexibleId).map((key, value) => MapEntry(key, value as FlexibleNode));
+    flexibles.removeWhere((key, y) => y.flexibleSelectedState == FlexibleSelectedState.locked);
+    var i = flexibles.values.length - 1;
+    flexibles[intent.flexibleId]!.params.flex = flexibles[intent.flexibleId]!.params.flex - i;
+    for (var sibling in flexibles.values) {
+      if (sibling.id != intent.flexibleId) {
+        sibling.params.flex = sibling.params.flex + 1;
+        flexibles[sibling.id] = sibling;
+      }
+    }
+    mwbp.addUpdateBranches(flexibles.values.toList());
+  }
+}
+
+class FocusParentAction extends Action<FocusParentIntent> {
+  FocusParentAction(this.mwbp);
+  final MetaWidgetBuilderProvider mwbp;
+
+  @override
+  void invoke(FocusParentIntent intent) {
+    mwbp.metaTree.forkPoints[intent.parentId]!.requestFocus();
+  }
+}
+
+class MetaFlexibleParams {
+  MetaFlexibleParams({this.flex = 7, required this.focusNode, this.id = "defaultId", this.selectedState = FlexibleSelectedState.notSelected, this.child = const MetaSizedBox()});
+
+  final FocusNode focusNode;
+  FlexibleSelectedState selectedState;
+  String id;
+  int flex;
+  MetaWidget child;
 }
 
 class MetaFlexible extends MetaWidget {
@@ -543,22 +747,31 @@ class MetaFlexible extends MetaWidget {
 
   @override
   Widget build() {
-    return Shortcuts(
-      shortcuts: {
-        LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.arrowUp): IncreaseFlexibleAmountIntent(params.id),
-      },
-      child: Actions(
-        actions: <Type, Action<Intent>>{
-          IncreaseFlexibleAmountIntent: IncreaseFlexibleAmountAction(mwbp),
+    return Flexible(
+      flex: params.flex,
+      child: Shortcuts(
+        shortcuts: {
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.arrowUp): IncreaseFlexibleAmountIntent(params.id),
+          LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.arrowDown): DecreaseFlexibleAmountIntent(params.id),
+          LogicalKeySet(LogicalKeyboardKey.space): FocusParentIntent(mwbp.metaTree.branchNodes[params.id]!.parentId),
+          LogicalKeySet(LogicalKeyboardKey.keyL): ToggleFlexibleLockedStateIntent(params.id),
         },
-        child: Focus(
-          // child: Container(
-            // decoration: BoxDecoration(border: Border.all(width: 1), color: flexibleSelectedColors[params.selectedState]),
-            child: Flexible(
-              flex: params.flex,
+        child: Actions(
+          actions: <Type, Action<Intent>>{
+            IncreaseFlexibleAmountIntent: IncreaseFlexibleAmountAction(mwbp),
+            DecreaseFlexibleAmountIntent: DecreaseFlexibleAmountAction(mwbp),
+            FocusParentIntent: FocusParentAction(mwbp),
+            ToggleFlexibleLockedStateIntent: ToggleFlexibleLockedStateAction(mwbp),
+          },
+          child: Focus(
+            focusNode: params.focusNode,
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(border: Border.all(width: 1, color: flexibleSelectedColors[params.selectedState]!)),
               child: params.child.build(),
             ),
-          // ),
+          ),
         ),
       ),
     );
@@ -585,4 +798,3 @@ class MetaSizedBox extends MetaWidget {
 }
 
 ///
-

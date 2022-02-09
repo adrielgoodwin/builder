@@ -52,10 +52,18 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
     rebuildTree();
   }
 
-  void setMetaFork(ForkPoint forkPoint) {
-    metaTree.addUpdateFork(forkPoint);
-    rebuildTree();
+  void addUpdateForks(List<ForkPoint> forks) {
+    for(var fork in forks) {
+      metaTree.addUpdateFork(fork);
+    }
   }
+
+  void addUpdateLeafs(List<Leaf> leafs) {
+    for(var leaf in leafs) {
+      metaTree.addUpdateLeaf(leaf);
+    }
+  }
+
 
   void rebuildTree() {
     _builtTree = metaTree.build().build();

@@ -103,7 +103,7 @@ class _RowParametersState extends State<RowParameters> {
           setState(() {
             crossAxisAlignment = value;
             rowFork.params.crossAxisAlignment = value;
-            mwbp.setMetaFork(rowFork);
+            mwbp.addUpdateForks([rowFork]);
           });
         },
       );
@@ -124,7 +124,7 @@ class _RowParametersState extends State<RowParameters> {
           setState(() {
             mainAxisAlignment = value;
             rowFork.params.mainAxisAlignment = value;
-            mwbp.setMetaFork(rowFork);
+            mwbp.addUpdateForks([rowFork]);
           });
         },
       );

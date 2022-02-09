@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:builder/builder/models/field_data.dart';
 import 'package:builder/builder/presentation/widget_maker/column_parameters.dart';
 import 'package:builder/builder/presentation/widget_maker/row_parameters.dart';
@@ -54,18 +56,29 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     String text2Id = "text2";
     String text3Id = "text3";
 
-    var flexNode1 = FlexibleNode(mwbp: state, parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams(id: flex1Id));
-    var flexNode2 = FlexibleNode(mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams(id: flex2Id));
-    var flexNode3 = FlexibleNode(mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams(id: flex3Id));
-    var flexNode4 = FlexibleNode(mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams(id: flex4Id));
-    var flexNode5 = FlexibleNode(mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams(id: flex5Id));
-    var flexNode6 = FlexibleNode(mwbp: state, parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams(id: flex6Id));
-    var rowFork1 = RowFork(mwbp: state, parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams(id: row1Id));
-    var column1 = ColumnFork(mwbp: state, parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams());
-    var column2 = ColumnFork(mwbp: state, parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams());
-    var text1 = TextLeaf(id: text1Id, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams());
-    var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams());
-    var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams());
+    var FN1 = FocusNode();
+    var FN2 = FocusNode();
+    var FN3 = FocusNode();
+    var FN4 = FocusNode();
+    var FN5 = FocusNode();
+    var FN6 = FocusNode();
+
+    var fnR = FocusNode();
+    var fnC = FocusNode();
+    var fnC2 = FocusNode();
+
+    var flexNode1 = FlexibleNode(focusNode: FN1, mwbp: state, parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams(id: flex1Id, focusNode: FN1));
+    var flexNode2 = FlexibleNode(focusNode: FN2,mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams(id: flex2Id, focusNode: FN2));
+    var flexNode3 = FlexibleNode(focusNode: FN3,mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams(id: flex3Id, focusNode: FN3));
+    var flexNode4 = FlexibleNode(focusNode: FN4,mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams(id: flex4Id, focusNode: FN4));
+    var flexNode5 = FlexibleNode(focusNode: FN5,mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams(id: flex5Id, focusNode: FN5));
+    var flexNode6 = FlexibleNode(focusNode: FN6,mwbp: state, parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams(id: flex6Id, focusNode: FN6));
+    var rowFork1 = RowFork(mwbp: state, focusNode: fnR, parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams(id: row1Id, focusNode: fnR));
+    var column1 = ColumnFork(mwbp: state, focusNode: fnC, parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams(id: column1Id, focusNode: fnC));
+    var column2 = ColumnFork(mwbp: state, focusNode: fnC2, parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams(id: column2Id, focusNode: fnC2));
+    var text1 = TextLeaf(id: text1Id, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams(id: text1Id));
+    var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams(id: text2Id));
+    var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams(id: text3Id));
 
     var metaTree = MetaTree();
 
