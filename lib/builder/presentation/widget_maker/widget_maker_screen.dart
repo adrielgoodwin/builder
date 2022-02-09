@@ -54,15 +54,15 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     String text2Id = "text2";
     String text3Id = "text3";
 
-    var flexNode1 = FlexibleNode(parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams());
-    var rowFork1 = RowFork(parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams());
-    var flexNode2 = FlexibleNode(parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams());
-    var flexNode3 = FlexibleNode(parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams());
-    var column1 = ColumnFork(parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams());
-    var column2 = ColumnFork(parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams());
-    var flexNode4 = FlexibleNode(parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams());
-    var flexNode5 = FlexibleNode(parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams());
-    var flexNode6 = FlexibleNode(parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams());
+    var flexNode1 = FlexibleNode(mwbp: state, parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams(id: flex1Id));
+    var flexNode2 = FlexibleNode(mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams(id: flex2Id));
+    var flexNode3 = FlexibleNode(mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams(id: flex3Id));
+    var flexNode4 = FlexibleNode(mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams(id: flex4Id));
+    var flexNode5 = FlexibleNode(mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams(id: flex5Id));
+    var flexNode6 = FlexibleNode(mwbp: state, parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams(id: flex6Id));
+    var rowFork1 = RowFork(mwbp: state, parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams(id: row1Id));
+    var column1 = ColumnFork(mwbp: state, parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams());
+    var column2 = ColumnFork(mwbp: state, parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams());
     var text1 = TextLeaf(id: text1Id, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams());
     var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams());
     var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams());
@@ -156,7 +156,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
                 ))
           ],
         ),
-        hasInit ? RowParameters(rowFork: metaTree.forkPoints['row1']! as RowFork) : SizedBox(),
+        // hasInit ? RowParameters(rowFork: metaTree.forkPoints['row1']! as RowFork) : SizedBox(),
         Flexible(
           flex: 2,
           child: Text("Widget Tree"),
