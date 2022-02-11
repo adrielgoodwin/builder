@@ -20,7 +20,7 @@ class Phone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var allTabItems = tabItems.map((e) => e.label).toList().join(", ");
-    print(tabItems.length);
+    // print(tabItems.length);
     /// In case the last tab is selected
     /// and one gets deleted
     /// this stops the out of bounds error
@@ -28,7 +28,7 @@ class Phone extends StatelessWidget {
     if(currentTab + 1 > pages.length) {
       _currentTab = pages.length - 1;
     }
-    print("rebuilding Phone");
+    // print("rebuilding Phone");
     return Material(
       elevation: 22,
       child: ClipRRect(

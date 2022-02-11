@@ -37,13 +37,15 @@ class _RowParametersState extends State<RowParameters> {
   @override
   Widget build(BuildContext context) {
 
+    var rf = widget.rowFork;
+
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
 
     return Flexible(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("Column Parameters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+          const Text("Row Parameters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,6 +88,12 @@ class _RowParametersState extends State<RowParameters> {
               ),
             ],
           ),
+          ElevatedButton(onPressed: () {
+            rf.addChildFlexible();
+          }, child: Text("Add Flexible")),
+          ElevatedButton(onPressed: () {
+            rf.addTextChild();
+          }, child: Text("Add Text")),
         ],
       ),
     );
@@ -124,6 +132,7 @@ class _RowParametersState extends State<RowParameters> {
           setState(() {
             mainAxisAlignment = value;
             rowFork.params.mainAxisAlignment = value;
+            print("newValue $value");
             mwbp.addUpdateForks([rowFork]);
           });
         },

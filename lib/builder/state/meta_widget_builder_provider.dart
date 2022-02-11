@@ -7,34 +7,6 @@ import '../MetaWidgetTreeBuilder/meta_tree.dart';
 
 class MetaWidgetBuilderProvider with ChangeNotifier {
 
-  // /// Widget Builder
-  // WidgetBuilderWithData _widgetBuilderWithData = WidgetBuilderWithData(
-  //   nameOfWidget: 'NewWidget',
-  //   topWidget: MetaFlexible(MetaFlexibleParams()),
-  //   classesInUse: [],
-  // );
-  //
-  // WidgetBuilderWithData get widgetBuilderWithData => _widgetBuilderWithData;
-  //
-  // void setNameOfWidget(String name) {
-  //   _widgetBuilderWithData.nameOfWidget = name;
-  //   notifyListeners();
-  // }
-  //
-  // void setTopWidget(MetaWidget metaWidget) {
-  //   _widgetBuilderWithData.topWidget = metaWidget;
-  //   notifyListeners();
-  // }
-  //
-  // void setClassInUse(ClassData classData) {
-  //   _widgetBuilderWithData.classesInUse.add(classData);
-  //   notifyListeners();
-  // }
-
-  // String get widgetAsString => _widgetBuilderWithData.writeAsString();
-  //
-  // String get widgetName => _widgetBuilderWithData.nameOfWidget;
-
   MetaTree metaTree = MetaTree();
 
   MetaTree get getMetaTree => metaTree;
@@ -56,14 +28,36 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
     for(var fork in forks) {
       metaTree.addUpdateFork(fork);
     }
+    rebuildTree();
   }
 
   void addUpdateLeafs(List<Leaf> leafs) {
     for(var leaf in leafs) {
       metaTree.addUpdateLeaf(leaf);
     }
+    rebuildTree();
   }
 
+  void deleteForks(List<ForkPoint> forks) {
+    for (var fork in forks) {
+      metaTree.forkPoints.remove(fork.id);
+    }
+    rebuildTree();
+  }
+
+  void deleteBranches(List<BranchNode> branches) {
+    for (var branch in branches) {
+      metaTree.branchNodes.remove(branch.id);
+    }
+    rebuildTree();
+  }
+
+  void deleteLeafs(List<Leaf> leafList) {
+    for(var leaf in leafList) {
+      metaTree.leafs.remove(leaf.id);
+    }
+    rebuildTree();
+  }
 
   void rebuildTree() {
     _builtTree = metaTree.build().build();

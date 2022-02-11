@@ -37,6 +37,8 @@ class _ColumnParametersState extends State<ColumnParameters> {
   @override
   Widget build(BuildContext context) {
 
+    var cf = widget.columnFork;
+
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
 
     return Flexible(
@@ -86,6 +88,9 @@ class _ColumnParametersState extends State<ColumnParameters> {
               ),
             ],
           ),
+          ElevatedButton(onPressed: () {
+            cf.addChildFlexible();
+          }, child: Text("Add Flexible")),
         ],
       ),
     );

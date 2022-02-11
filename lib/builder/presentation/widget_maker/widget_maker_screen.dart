@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import '../../MetaWidgetTreeBuilder/meta_widget_tree_builder.dart';
 import '../../write_files_api.dart';
 import '../../MetaWidgetTreeBuilder/meta_tree.dart';
+import 'widget_builder_sidebar.dart';
 
 /// models
 import '../../models/class_data.dart';
@@ -67,37 +68,77 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     var fnC = FocusNode();
     var fnC2 = FocusNode();
 
-    var flexNode1 = FlexibleNode(focusNode: FN1, mwbp: state, parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams(id: flex1Id, focusNode: FN1));
-    var flexNode2 = FlexibleNode(focusNode: FN2,mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams(id: flex2Id, focusNode: FN2));
-    var flexNode3 = FlexibleNode(focusNode: FN3,mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams(id: flex3Id, focusNode: FN3));
-    var flexNode4 = FlexibleNode(focusNode: FN4,mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex4Id, params: MetaFlexibleParams(id: flex4Id, focusNode: FN4));
-    var flexNode5 = FlexibleNode(focusNode: FN5,mwbp: state, parentId: column1Id, parentBranch: column1Id, id: flex5Id, params: MetaFlexibleParams(id: flex5Id, focusNode: FN5));
-    var flexNode6 = FlexibleNode(focusNode: FN6,mwbp: state, parentId: column2Id, parentBranch: column2Id, id: flex6Id, params: MetaFlexibleParams(id: flex6Id, focusNode: FN6));
-    var rowFork1 = RowFork(mwbp: state, focusNode: fnR, parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams(id: row1Id, focusNode: fnR));
-    var column1 = ColumnFork(mwbp: state, focusNode: fnC, parentId: flex2Id, id: column1Id, parentBranch: row1Id, params: MetaColumnParams(id: column1Id, focusNode: fnC));
-    var column2 = ColumnFork(mwbp: state, focusNode: fnC2, parentId: flex3Id, id: column2Id, parentBranch: row1Id, params: MetaColumnParams(id: column2Id, focusNode: fnC2));
-    var text1 = TextLeaf(id: text1Id, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams(id: text1Id));
-    var text2 = TextLeaf(id: text2Id, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams(id: text2Id));
-    var text3 = TextLeaf(id: text3Id, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams(id: text3Id));
+    var flexNode1 = FlexibleNode(
+        childrenNodes: ChildrenNodes(), focusNode: FN1, mwbp: state, parentId: "", parentBranch: "", id: flex1Id, params: MetaFlexibleParams(id: flex1Id, focusNode: FN1));
+    var flexNode2 = FlexibleNode(
+        childrenNodes: ChildrenNodes(), focusNode: FN2, mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex2Id, params: MetaFlexibleParams(id: flex2Id, focusNode: FN2));
+    var flexNode3 = FlexibleNode(
+        childrenNodes: ChildrenNodes(), focusNode: FN3, mwbp: state, parentId: row1Id, parentBranch: row1Id, id: flex3Id, params: MetaFlexibleParams(id: flex3Id, focusNode: FN3));
+    var flexNode4 = FlexibleNode(
+        childrenNodes: ChildrenNodes(),
+        focusNode: FN4,
+        mwbp: state,
+        parentId: column1Id,
+        parentBranch: column1Id,
+        id: flex4Id,
+        params: MetaFlexibleParams(id: flex4Id, focusNode: FN4));
+    var flexNode5 = FlexibleNode(
+        childrenNodes: ChildrenNodes(),
+        focusNode: FN5,
+        mwbp: state,
+        parentId: column1Id,
+        parentBranch: column1Id,
+        id: flex5Id,
+        params: MetaFlexibleParams(id: flex5Id, focusNode: FN5));
+    var flexNode6 = FlexibleNode(
+        childrenNodes: ChildrenNodes(),
+        focusNode: FN6,
+        mwbp: state,
+        parentId: column2Id,
+        parentBranch: column2Id,
+        id: flex6Id,
+        params: MetaFlexibleParams(id: flex6Id, focusNode: FN6));
+    var rowFork1 =
+        RowFork(childrenNodes: ChildrenNodes(), mwbp: state, focusNode: fnR, parentId: flex1Id, id: row1Id, parentBranch: "", params: MetaRowParams(id: row1Id, focusNode: fnR));
+    var column1 = ColumnFork(
+        childrenNodes: ChildrenNodes(),
+        mwbp: state,
+        focusNode: fnC,
+        parentId: flex2Id,
+        id: column1Id,
+        parentBranch: row1Id,
+        params: MetaColumnParams(id: column1Id, focusNode: fnC));
+    var column2 = ColumnFork(
+        childrenNodes: ChildrenNodes(),
+        mwbp: state,
+        focusNode: fnC2,
+        parentId: flex3Id,
+        id: column2Id,
+        parentBranch: row1Id,
+        params: MetaColumnParams(id: column2Id, focusNode: fnC2));
+    var text1 = TextLeaf(id: text1Id, mwbp: state, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams(id: text1Id));
+    var text2 = TextLeaf(id: text2Id, mwbp: state, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams(id: text2Id));
+    var text3 = TextLeaf(id: text3Id, mwbp: state, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams(id: text3Id));
 
     var metaTree = MetaTree();
 
-    metaTree.addUpdateBranch(flexNode1);
-    metaTree.addUpdateBranch(flexNode2);
-    metaTree.addUpdateBranch(flexNode3);
-    metaTree.addUpdateBranch(flexNode4);
-    metaTree.addUpdateBranch(flexNode5);
-    metaTree.addUpdateBranch(flexNode6);
+    // metaTree.addUpdateBranch(flexNode1);
+    // metaTree.addUpdateBranch(flexNode2);
+    // metaTree.addUpdateBranch(flexNode3);
+    // metaTree.addUpdateBranch(flexNode4);
+    // metaTree.addUpdateBranch(flexNode5);
+    // metaTree.addUpdateBranch(flexNode6);
 
     metaTree.addUpdateFork(rowFork1);
-    metaTree.addUpdateFork(column1);
-    metaTree.addUpdateFork(column2);
+    // metaTree.addUpdateFork(column1);
+    // metaTree.addUpdateFork(column2);
+    //
+    // metaTree.addUpdateLeaf(text1);
+    // metaTree.addUpdateLeaf(text2);
+    // metaTree.addUpdateLeaf(text3);
 
-    metaTree.addUpdateLeaf(text1);
-    metaTree.addUpdateLeaf(text2);
-    metaTree.addUpdateLeaf(text3);
-
-    metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
+    // metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
+    metaTree.setBuildOrder([row1Id]);
 
     state.setMetaTree(metaTree);
 
@@ -122,100 +163,29 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
         },
       ),
       body: Row(children: [
-        Flexible(
+        const Flexible(
           flex: 1,
-          child: buildSidebar(classState),
+          child: WidgetBuilderSidebar(),
         ),
         Flexible(
-          flex: 3,
+            flex: 3,
             child: Center(
                 child: Material(
-          elevation: 22,
-          child: Container(
-            height: 500,
-            width: 300,
-            child: Column(
-              children: [builtTree],
-            ),
-          ),
-        ))),
+              elevation: 22,
+              child: Container(
+                height: 500,
+                width: 300,
+                child: SingleChildScrollView(
+                  child: builtTree,
+                )
+              ),
+            ))),
       ]),
     );
   }
-
-  Widget buildSidebar(ClassMakerProvider state) {
-    var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
-    var metaTree = metaBuilderState.getMetaTree;
-    // var uuid = Uuid();
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ElevatedButton(onPressed: () => state.loadRegistries(), child: Text("load classes")),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Classes",
-              style: TextStyle(fontSize: 26),
-            ),
-            IconButton(
-                onPressed: () {
-                  // print(stepThroughTree('id1'));
-                },
-                icon: const Icon(
-                  Icons.add,
-                  color: Colors.green,
-                ))
-          ],
-        ),
-        // hasInit ? RowParameters(rowFork: metaTree.forkPoints['row1']! as RowFork) : SizedBox(),
-        Flexible(
-          flex: 2,
-          child: Text("Widget Tree"),
-        ),
-        const SizedBox(
-          height: 22,
-        ),
-      ],
-    );
-  }
-
-  Widget sidebarClassItem(ClassData classData, ClassMakerProvider state) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: Text(
-              classData.name,
-              style: TextStyle(fontSize: 16, color: C.orange, fontWeight: FontWeight.w500),
-            ),
-          ),
-          ...classData.fieldData.map((e) => fieldSelector(e)).toList(),
-        ],
-      ),
-    );
-  }
-
-  Widget fieldSelector(FieldData fieldData) {
-    return GestureDetector(
-      onTap: () => setFieldForUse(fieldData),
-      child: Row(
-        children: [
-          Text(
-            "  ${fieldData.type}",
-            style: TextStyle(color: C.teal, fontWeight: FontWeight.w400),
-          ),
-          Text(
-            "  ${fieldData.name}",
-            style: TextStyle(color: C.purple, fontWeight: FontWeight.w400),
-          ),
-        ],
-      ),
-    );
-  }
 }
+
+/// Build a sidebar that shows:
+/// a) ForkPoints (Column/Row)
+/// b) BranchNodes (Flexible)
+/// c) Leafs (Text)
