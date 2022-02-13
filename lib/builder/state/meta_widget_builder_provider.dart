@@ -38,6 +38,12 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
     rebuildTree();
   }
 
+  void deleteAllChildren(ChildrenNodes childrenNodes) {
+    deleteForks(childrenNodes.forkPoints);
+    deleteBranches(childrenNodes.branchNodes);
+    deleteLeafs(childrenNodes.leafs);
+  }
+
   void deleteForks(List<ForkPoint> forks) {
     for (var fork in forks) {
       metaTree.forkPoints.remove(fork.id);

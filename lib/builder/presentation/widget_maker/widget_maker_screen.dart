@@ -116,9 +116,9 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
         id: column2Id,
         parentBranch: row1Id,
         params: MetaColumnParams(id: column2Id, focusNode: fnC2));
-    var text1 = TextLeaf(id: text1Id, mwbp: state, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams(id: text1Id));
-    var text2 = TextLeaf(id: text2Id, mwbp: state, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams(id: text2Id));
-    var text3 = TextLeaf(id: text3Id, mwbp: state, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams(id: text3Id));
+    var text1 = TextLeaf(id: text1Id, mwbp: state, parentBranch: column1Id, parentId: flex4Id, params: MetaTextParams(id: text1Id, textStyle: MetaTextStyle()));
+    var text2 = TextLeaf(id: text2Id, mwbp: state, parentBranch: column1Id, parentId: flex5Id, params: MetaTextParams(id: text2Id, textStyle: MetaTextStyle()));
+    var text3 = TextLeaf(id: text3Id, mwbp: state, parentBranch: column2Id, parentId: flex6Id, params: MetaTextParams(id: text3Id, textStyle: MetaTextStyle()));
 
     var metaTree = MetaTree();
 
@@ -132,14 +132,13 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
     metaTree.addUpdateFork(rowFork1);
     // metaTree.addUpdateFork(column1);
     // metaTree.addUpdateFork(column2);
-    //
+
     // metaTree.addUpdateLeaf(text1);
     // metaTree.addUpdateLeaf(text2);
     // metaTree.addUpdateLeaf(text3);
-
+    //
     // metaTree.setBuildOrder([column2Id, column1Id, row1Id]);
     metaTree.setBuildOrder([row1Id]);
-
     state.setMetaTree(metaTree);
 
     hasInit = true;
@@ -149,7 +148,7 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var classState = Provider.of<ClassMakerProvider>(context);
+
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
 
     var builtTree = metaBuilderState.builtTree;
@@ -164,11 +163,11 @@ class _WidgetMakerScreenState extends State<WidgetMakerScreen> {
       ),
       body: Row(children: [
         const Flexible(
-          flex: 1,
+          flex: 2,
           child: WidgetBuilderSidebar(),
         ),
         Flexible(
-            flex: 3,
+            flex: 5,
             child: Center(
                 child: Material(
               elevation: 22,

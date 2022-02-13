@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import '../../MetaWidgetTreeBuilder/meta_tree.dart';
 import 'package:provider/provider.dart';
 import '../../state/meta_widget_builder_provider.dart';
+
 import 'column_parameters.dart';
 import 'row_parameters.dart';
+import 'text_parameters.dart';
+
+
 
 class WidgetBuilderSidebar extends StatefulWidget {
   const WidgetBuilderSidebar({Key? key}) : super(key: key);
@@ -20,9 +24,12 @@ class _WidgetBuilderSidebarState extends State<WidgetBuilderSidebar> {
   @override
   Widget build(BuildContext context) {
     MetaWidgetBuilderProvider mwbp = Provider.of<MetaWidgetBuilderProvider>(context);
+
     return Column(
       children: [
-        widgetManipulator,
+        Container(
+            height: 450,
+            child: widgetManipulator),
         Expanded(
           child: SingleChildScrollView(
             child: Column(
@@ -31,6 +38,8 @@ class _WidgetBuilderSidebarState extends State<WidgetBuilderSidebar> {
                 ...mwbp.metaTree.forkPoints.values.map((e) => forkTile(e)),
                 Text("Flexibles"),
                 ...mwbp.metaTree.branchNodes.values.map((bn) => flexibleTile(bn as FlexibleNode)).toList(),
+                Text("Texts"),
+                ...mwbp.metaTree.leafs.values.map((bn) => textTile(bn as TextLeaf)).toList(),
               ],
             ),
           ),
@@ -69,6 +78,16 @@ class _WidgetBuilderSidebarState extends State<WidgetBuilderSidebar> {
         },
         child: Text(fp.id));
   }
+
+  Widget textTile(TextLeaf tl) {
+    return ElevatedButton(
+      onPressed: () => setState(() {
+        widgetManipulator = TextParameters(textLeaf: tl);
+      }),
+      child: Text(tl.id),
+    );
+  }
+
 }
 
 class FlexibleManipulator extends StatefulWidget {
@@ -111,4 +130,7 @@ class _FlexibleManipulatorState extends State<FlexibleManipulator> {
       ],
     );
   }
+
+
+
 }

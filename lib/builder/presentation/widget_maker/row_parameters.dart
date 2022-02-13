@@ -24,6 +24,7 @@ class _RowParametersState extends State<RowParameters> {
     "space evenly": MainAxisAlignment.spaceEvenly,
     "center": MainAxisAlignment.center,
     "space between": MainAxisAlignment.spaceBetween,
+    "end": MainAxisAlignment.end,
   };
 
   Map<String, CrossAxisAlignment> xa = {
@@ -41,61 +42,59 @@ class _RowParametersState extends State<RowParameters> {
 
     var metaBuilderState = Provider.of<MetaWidgetBuilderProvider>(context);
 
-    return Flexible(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Row Parameters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Main Axis Alignment",
-                        style: titleStyle,
-                      ),
-                      ...maOptions(metaBuilderState, widget.rowFork),
-                      Divider(),
-                      Text(
-                        "Cross Axis Alignment",
-                        style: titleStyle,
-                      ),
-                      ...xaOptions(metaBuilderState, widget.rowFork),
-                    ],
-                  ),
-                ),
-              ),
-              Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    decoration: BoxDecoration(border: Border.all()),
-                    child: Row(
-                      mainAxisAlignment: mainAxisAlignment,
-                      crossAxisAlignment: crossAxisAlignment,
-                      children: [circle(), circle(), circle()],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Row Parameters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Main Axis Alignment",
+                      style: titleStyle,
                     ),
+                    ...maOptions(metaBuilderState, widget.rowFork),
+                    Divider(),
+                    Text(
+                      "Cross Axis Alignment",
+                      style: titleStyle,
+                    ),
+                    ...xaOptions(metaBuilderState, widget.rowFork),
+                  ],
+                ),
+              ),
+            ),
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(border: Border.all()),
+                  child: Row(
+                    mainAxisAlignment: mainAxisAlignment,
+                    crossAxisAlignment: crossAxisAlignment,
+                    children: [circle(), circle(), circle()],
                   ),
                 ),
               ),
-            ],
-          ),
-          ElevatedButton(onPressed: () {
-            rf.addChildFlexible();
-          }, child: Text("Add Flexible")),
-          ElevatedButton(onPressed: () {
-            rf.addTextChild();
-          }, child: Text("Add Text")),
-        ],
-      ),
+            ),
+          ],
+        ),
+        ElevatedButton(onPressed: () {
+          rf.addChildFlexible();
+        }, child: Text("Add Flexible")),
+        ElevatedButton(onPressed: () {
+          rf.addTextChild();
+        }, child: Text("Add Text")),
+      ],
     );
   }
 
