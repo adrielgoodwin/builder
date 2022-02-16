@@ -536,6 +536,13 @@ class TextLeaf extends Leaf {
 /// gridview
 ///
 
+
+enum dataWidgetType { single, list }
+
+// create proper builder for widget...
+// maybe this is done in the page builder screen
+
+
 class WidgetBuilderWithData {
   WidgetBuilderWithData({required this.nameOfWidget, required this.topWidget, required this.classesInUse});
 
