@@ -43,7 +43,7 @@ Widget _addPage(BuilderProvider state, FunctionsProvider functionsState) {
             var txt = functionsState.newPageText;
             var id = uuid.v4();
             var page = PageData(
-                name: txt,
+                pageWidgetName: txt,
                 id: id,
                 tabItemData: TabItemData(
                   id: id,

@@ -14,7 +14,7 @@ import 'builder/write_files_api.dart';
 
 // right here whats imported is some classes we use to easily store the data we would like to use in our application
 // We know the computer runs on simple commands so the classes act as a way to speak clearly and efficiently to store
-// and retrieve what we want to.
+// and retrieve the types of data we need.
 
 /// models
 import 'builder/models/class_data.dart';
@@ -37,8 +37,8 @@ void main() {
   var id2 = uuid.v4();
 
   var pages = [
-    PageData(name: "page one", id: id1, tabItemData: TabItemData(id: id1, name: "Page one", icon: "icon"),),
-    PageData(name: "page two", id: id2, tabItemData: TabItemData(id: id2, name: "Page two", icon: "icon"),),
+    PageData(pageWidgetName: "page one", id: id1, tabItemData: TabItemData(id: id1, name: "Page one", icon: "icon"),),
+    PageData(pageWidgetName: "page two", id: id2, tabItemData: TabItemData(id: id2, name: "Page two", icon: "icon"),),
   ];
 
   // testRequest();

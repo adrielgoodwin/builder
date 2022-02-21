@@ -12,9 +12,9 @@ class BuilderProvider with ChangeNotifier {
 
   factory BuilderProvider.instance({required Registry registry}) {
     return BuilderProvider(pages: [
-      PageData(name: "page one", id: "id1", tabItemData: TabItemData(id: "id1", name: "Page one", icon: "icon"),),
-      PageData(name: "page two", id: "id2", tabItemData: TabItemData(id: "id2", name: "Page two", icon: "icon"),),
-      PageData(name: "page two", id: "id2", tabItemData: TabItemData(id: "id2", name: "Page two", icon: "icon"),),
+      PageData(pageWidgetName: "page one", id: "id1", tabItemData: TabItemData(id: "id1", name: "Page one", icon: "icon"),),
+      PageData(pageWidgetName: "page two", id: "id2", tabItemData: TabItemData(id: "id2", name: "Page two", icon: "icon"),),
+      PageData(pageWidgetName: "page two", id: "id2", tabItemData: TabItemData(id: "id2", name: "Page two", icon: "icon"),),
     ]);
   }
 
