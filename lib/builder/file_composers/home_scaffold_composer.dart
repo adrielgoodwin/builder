@@ -3,7 +3,9 @@ String composeHomeScaffold(List<String> tabItemNames) {
 
   var items = "";
 
-  tabItemNames.forEach((e) => items += "          _buildItem(TabItem.$e), \n");
+  for (var e in tabItemNames) {
+    items += "          _buildItem(TabItem.$e), \n";
+  }
 
   return '''
 

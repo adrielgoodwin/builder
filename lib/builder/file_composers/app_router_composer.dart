@@ -36,8 +36,8 @@ class AppRouterComposer {
   void generateImports() {
     imports.add("import 'package:flutter/material.dart';");
     for(var pd in pageDatas) {
-      imports += pd.classesInUse.map((e) => 'import "../models/$e.dart";').toList();
-      imports.add("import '../pages/${pd.pageWidgetName}.dart;'");
+      imports.add('import "../models/${pd.dataClass}.dart";');
+      imports.add("import '../pages/${pd.dataClass}Page.dart;'");
     }
   }
 
@@ -45,7 +45,7 @@ class AppRouterComposer {
 
   void generateRoutes() {
     routes.add("class AppRoutes {");
-    routes = pageDatas.map((pd) => "  static const ${pd.pageWidgetName.paramify()} = '/${pd.pageWidgetName}';").toList();
+    routes = pageDatas.map((pd) => "  static const ${pd.dataClass.paramify()} = '/${pd.dataClass}';").toList();
     routes.add("}");
   }
 
@@ -59,12 +59,12 @@ class AppRouterComposer {
 
   void generateAppRouters() {
     for(var pd in pageDatas) {
-      appRouters.add("      case AppRoutes.${pd.pageWidgetName.paramify()}:");
+      appRouters.add("      case AppRoutes.${pd.dataClass.paramify()}:");
       appRouters.add("        return MaterialPageRoute<dynamic>(");
       appRouters.add("        final mapArgs = args as Map<String, dynamic>;");
-      appRouters.addAll(pd.classesInUse.map((e) => "        final ${e.paramify()} = mapArgs['${e.paramify()}'] as $e;"));
+      appRouters.add("        final ${pd.dataClass.paramify()} = mapArgs['${pd.dataClass.paramify()}'] as ${pd.dataClass};");
       appRouters.add("        return MaterialPageRoute<dynamic>(");
-      appRouters.add("          builder: (_) => ${pd.pageWidgetName}(${pd.classesInUse.map((e) => "${e.paramify()}: ${e.paramify()}").toList().join(", ")}),");
+      appRouters.add("          builder: (_) => ${pd.dataClass}Page(${pd.dataClass.paramify()}: ${pd.dataClass.paramify()})");
       appRouters.add("          settings: settings,");
       appRouters.add("          fullscreenDialog: true,");
       appRouters.add("        );");

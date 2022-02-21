@@ -16,6 +16,15 @@ class Paths {
   static const builderRegistry = 'lib/builder/models/registry/registry.json';
 }
 
+class NewProjectPaths {
+  static const newProjectName = 'another_flutter_app';
+  static const root = "$newProjectName/lib";
+  static const models = "$root/app/models/";
+  static const pages = "$root/app/pages/";
+  static const widgets = "$root/app/widgets/";
+  static const appRoot = "$newProjectName/app/";
+}
+
 class FileToWrite {
   FileToWrite({required this.name, required this.fileLocation, required this.code});
 

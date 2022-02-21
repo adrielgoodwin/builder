@@ -9,8 +9,8 @@ String composeTabItem(List<TabItemData> tabItemData) {
   /// 2. set allTabs map for each tabItemData
   var tabItemMap = tabItemData.map((e) {
     return '''    TabItem.${e.name}: TabItemData(
-      key: Keys.${e.name}Tab,
-      title: Strings.${e.name},
+      key: ${e.name},
+      title: ${e.name},
       icon: Icons.${e.icon},
     ),''';
   }).toList().join('\n');

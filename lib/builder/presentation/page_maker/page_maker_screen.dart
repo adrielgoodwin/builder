@@ -81,7 +81,7 @@ class _PageMakerScreenState extends State<PageMakerScreen> {
                                 }),
                             pageController: pageController,
                             pages: state.getPages.map((e) => Page(e)).toList(),
-                            tabItems: state.getPages.map((e) => BottomNavigationBarItem(icon: Icon(Icons.face), label: e.pageWidgetName)).toList()),
+                            tabItems: state.getPages.map((e) => BottomNavigationBarItem(icon: Icon(Icons.face), label: e.dataClass)).toList()),
                       ),
                     ),
                     Positioned(child: sizeSelector(),
@@ -130,7 +130,7 @@ class Page extends StatelessWidget {
   Widget build(BuildContext context) {
     // print("${pageData.name} rebuilding");
     return Scaffold(
-      body: Text(pageData.pageWidgetName),
+      body: Text(pageData.dataClass),
     );
   }
 }
