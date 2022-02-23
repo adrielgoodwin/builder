@@ -7,6 +7,12 @@ import 'tabItemData.dart';
 // upon clicking, this will push on the stack the 'single record'
 // page for that particular data model.
 
+/// DOES NOT
+/// contain any MetaWidgets that are user created.
+/// USED TO GENERATE:
+/// Router
+/// App Pages
+
 class PageData {
   PageData({required this.dataClass, required this.id, required this.tabItemData});
 

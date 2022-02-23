@@ -1,35 +1,3 @@
-
-
-String makeShowFunction(List<String> requiredClassData, String pageName) {
-  var requiredParams = requiredClassData.map((e) => " required $e ${e.paramify()}").toList().join(", ");
-  var requiredArgs = requiredClassData.map((e) => "'${e.paramify()}': ${e.paramify()},").toList().join(", \n");
-  var showFunc = '''  static Future<void> show(
-      {required BuildContext context, $requiredParams}) async {
-    await Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.$pageName,
-      arguments: {
-         $requiredArgs
-       },
-     );
-   }
-''';
-  return showFunc;
-}
-
-// class come {
-//   static Future<void> show(
-//       {required BuildContext context, required Job job, Entry? entry}) async {
-//     await Navigator.of(context, rootNavigator: true).pushNamed(
-//       AppRoutes.entryPage,
-//       arguments: {
-//         'job': job,
-//         'entry': entry,
-//       },
-//     );
-//   }
-// }
-
-
 extension StringExtension on String {
   // from underscores to proper camelcase
   String classify() {
