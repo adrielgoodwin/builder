@@ -1,0 +1,44 @@
+April 5th 2022, Cafe Canela, Puerto Vallarta, with Katia Dorantes
+
+Things to be done, not in any real order
+
+
+*** Fails when adding a second class.
+Probably need to clear the
+
+
+~ DONE ~ -Install Android Emulator
+-Write app to 'new app' location
+-When generating a new class a must-have parameter is 'name'
+-Composition Files
+    a) To show the data for a record of a class *^
+    b) A little tile to show just a couple pieces of data about a class,
+    and when you click it it takes you to the full record
+    c) The actual app which contains
+        1. A drawer with the class names which when clicked go to
+        2. *^ The records for that class with an add new button that will
+        push the form overtop of the records
+    d) alter the form generator to search for class records
+        1. For searching and selecting one
+        2. For searching and selecting multiple
+        3. A button that lets them add a new record of the class right there
+
+
+simple IO app v 0.1 is just classes in a drawer
+1. forms to input data
+2. list view of that data
+
+features
+1. data-types
+    a) String b) numbers c) Class
+    only a class can be a list
+
+ui
+1. basic text inputs for both strings and numbers
+2. for classes, a search box with clickable results appearing below
+
+
+Future stuff:
+display types:
+drawer, grid-list with preview of class
+visual arrangement of classes based on their relationships/'hierarchical' structure
