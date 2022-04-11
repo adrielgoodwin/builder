@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SingleSearch extends StatefulWidget {
-  const SingleSearch({Key? key, required this.dataSet, required this.resultCallback}) : super(key: key);
+  const SingleSearch({Key? key, required this.dataSet, required this.label, required this.resultCallback}) : super(key: key);
 
   final List<String> dataSet;
   final Function resultCallback;
+  final String label;
 
   @override
   State<SingleSearch> createState() => _SingleSearchState();
@@ -79,6 +80,7 @@ class _SingleSearchState extends State<SingleSearch> {
               /// Search box or Result when it has been selected
               Expanded(
                 child: lockedIn ? Text(selectedResult) : TextField(
+                  decoration: InputDecoration(labelText: widget.label),
                   controller: controller,
                   focusNode: focusNode,
                   onSubmitted: manualEnter,

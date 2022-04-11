@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MultiSearch extends StatefulWidget {
-  const MultiSearch({Key? key, required this.dataSet, required this.resultCallback}) : super(key: key);
+  const MultiSearch({Key? key, required this.dataSet, required this.label, required this.resultCallback}) : super(key: key);
 
   final List<String> dataSet;
   final Function resultCallback;
+  final String label;
 
   @override
   State<MultiSearch> createState() => _MultiSearchState();
@@ -77,6 +78,9 @@ class _MultiSearchState extends State<MultiSearch> {
               /// Search box or Result when it has been selected
               Expanded(
                 child: TextField(
+                  decoration: InputDecoration(
+                    labelText: widget.label,
+                  ),
                   controller: controller,
                   focusNode: focusNode,
                   onSubmitted: manualEnter,

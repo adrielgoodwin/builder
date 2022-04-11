@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 import '../state/class_maker_provider.dart';
 
-// import '../generated/io_app/io_app_screen.dart';
+import '../generated/io_app/io_app_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 PageMakerScreen(),
                 ClassMakerScreen(),
                 WidgetMakerScreen(),
-                // IoAppScreen(),
+                IoAppScreen(),
               ],
             ),
           ),

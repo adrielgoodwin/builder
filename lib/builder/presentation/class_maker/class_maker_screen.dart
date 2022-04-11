@@ -31,9 +31,11 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var state = Provider.of<ClassMakerProvider>(context);
+    var loadRegistriesFunc = Provider.of<ClassMakerProvider>(context, listen: false).loadRegistries;
+    var addClassFunc = Provider.of<ClassMakerProvider>(context, listen: false).addNewClass;
+    var newAppClasses = Provider.of<ClassMakerProvider>(context).newAppClasses;
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Row(
@@ -47,7 +49,7 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
                 height: double.infinity,
                 color: C.lightGray,
                 child: SingleChildScrollView(
-                  child: buildSidebar(state),
+                  child: buildSidebar(newAppClasses, loadRegistriesFunc, addClassFunc),
                 ),
               ),
             ),
@@ -61,7 +63,7 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          ..._buildClassForms(state),
+                          ..._buildClassForms(newAppClasses),
                         ],
                       ),
                     ),
@@ -82,21 +84,21 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
   }
 }
 
-List<Widget> _buildClassForms(ClassMakerProvider state) {
-  if(state.isForBuilder) {
-    return state.builderClasses.map((e) => ClassForm(classData: e)).toList();
-  } else {
-    return state.newAppClasses.map((e) => ClassForm(classData: e)).toList();
-  }
+List<Widget> _buildClassForms(List<ClassData> newAppClasses) {
+  // if(state.isForBuilder) {
+  //   return state.builderClasses.map((e) => ClassForm(classData: e)).toList();
+  // } else {
+  return newAppClasses.map((e) => ClassForm(classData: e)).toList();
+  // }
 }
 
-Widget buildSidebar(ClassMakerProvider state) {
+Widget buildSidebar(List<ClassData> newAppClasses, Function loadRegistries, Function addNewClass) {
   var uuid = const Uuid();
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      ElevatedButton(onPressed: () => state.loadRegistries(), child: const Text("load classes")),
+      ElevatedButton(onPressed: () => loadRegistries(), child: const Text("load classes")),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -106,7 +108,7 @@ Widget buildSidebar(ClassMakerProvider state) {
           ),
           IconButton(
               onPressed: () {
-                state.addNewClass(ClassData(id: uuid.v4(), name: '', fieldData: [], neededImports: []));
+                addNewClass(ClassData(id: uuid.v4(), name: '', fieldData: [], neededImports: []));
               },
               icon: const Icon(
                 Icons.add,
@@ -117,20 +119,22 @@ Widget buildSidebar(ClassMakerProvider state) {
       const SizedBox(
         height: 22,
       ),
-      ..._buildClasses(state),
+      ..._buildSidebarClassView(newAppClasses),
     ],
   );
 }
 
-List<Widget> _buildClasses(ClassMakerProvider state) {
-  if(state.isForBuilder) {
-    return state.builderClasses.map((classData) => sidebarClassItem(classData, state)).toList();
-  } else {
-    return state.newAppClasses.map((classData) => sidebarClassItem(classData, state)).toList();
-  }
+List<Widget> _buildSidebarClassView(List<ClassData> newAppClasses) {
+  // if(state.isForBuilder) {
+  //   return state.builderClasses.map((classData) => sidebarClassItem(classData, state)).toList();
+  // } else {
+  return newAppClasses.map((classData) => sidebarClassItem(classData)).toList();
+  // }
 }
 
-Widget sidebarClassItem(ClassData classData, ClassMakerProvider state) {
+Widget sidebarClassItem(ClassData classData) {
+  var fieldDatas = classData.fieldData;
+  fieldDatas.removeWhere((element) => element.name == 'id');
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
@@ -141,19 +145,19 @@ Widget sidebarClassItem(ClassData classData, ClassMakerProvider state) {
           onTap: () {},
           child: Text(
             classData.name,
-            style: TextStyle(fontSize: 16, color: C.orange, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 22, color: C.orange, fontWeight: FontWeight.w500),
           ),
         ),
-        ...classData.fieldData.map((e) {
+        ...fieldDatas.map((e) {
           return Row(
             children: [
               Text(
                 "  ${e.type}",
-                style: TextStyle(color: C.teal, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 18, color: C.teal, fontWeight: FontWeight.w400),
               ),
               Text(
                 "  ${e.name}",
-                style: TextStyle(color: C.purple, fontWeight: FontWeight.w400),
+                style: TextStyle(fontSize: 18,color: C.purple, fontWeight: FontWeight.w400),
               ),
             ],
           );

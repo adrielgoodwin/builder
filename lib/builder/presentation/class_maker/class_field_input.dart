@@ -9,13 +9,14 @@ import 'package:uuid/uuid.dart';
 /// factor out state from functions where its not used anymore
 
 class ClassFieldInput extends StatefulWidget {
-  const ClassFieldInput({Key? key, required this.parentClass, required this.id, required this.removeWidget, required this.updateFieldData, required this.fieldData}) : super(key: key);
+  const ClassFieldInput({Key? key, required this.parentClass, required this.widgetId, required this.removeWidget, required this.fieldExists, required this.updateFieldData, required this.fieldData}) : super(key: key);
 
   final String parentClass;
   final FieldData? fieldData;
   final Function removeWidget;
   final Function updateFieldData;
-  final String id;
+  final Function fieldExists;
+  final String widgetId;
 
   @override
   _ClassFieldInputState createState() => _ClassFieldInputState();
@@ -29,7 +30,9 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
   bool isAList = false;
   String listOrSingle = "Singular";
 
-  var uuid = Uuid();
+  var uuid = const Uuid();
+
+  var fieldNameController = TextEditingController();
 
   late String id;
 
@@ -43,34 +46,39 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
       var x = widget.fieldData!;
       id = x.id;
       fieldName = x.name;
-      fieldType = x.type;
       isAClass = x.isAClass;
-      isAList = x.isAClass;
+      isAList = x.isAList;
+      /// Watch out for this
+      if(x.isAClass) {
+        fieldType = "Class";
+      } else {
+        fieldType = x.type;
+      }
     } else {
       id = uuid.v4();
     }
   }
 
-  void _save(ClassMakerProvider state) {
-    var fieldData = FieldData(parentClass: widget.parentClass, id: id, type: isAClass ? whichClass : fieldType, name: fieldName, description: 'description', isAClass: isAClass, isAList: isAList);
-    widget.updateFieldData(fieldData);
-  }
-
-  void _remove(ClassMakerProvider state) {
-    setState(() {
-      widget.removeWidget(widget.id);
-    });
+  void _save() {
+    if(!widget.fieldExists(fieldName, id)) {
+      var fieldData = FieldData(parentClass: widget.parentClass, id: id, type: isAClass ? whichClass : fieldType, name: fieldName, description: 'description', isAClass: isAClass, isAList: isAList);
+      widget.updateFieldData(fieldData);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     var state = Provider.of<ClassMakerProvider>(context);
 
-
     List<String> classesAsStrings = state.newAppClasses.isNotEmpty ? state.newAppClasses.map((e) => e.name).toList() : ['No classes yet'];
 
     if (!hasInit) {
       whichClass = classesAsStrings[0];
+      if(fieldName.isNotEmpty) {
+        setState(() {
+        fieldNameController.text = fieldName;
+      });
+      }
       hasInit = true;
     }
 
@@ -86,7 +94,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
               Icons.delete,
               color: Colors.red,
             ),
-            onPressed: () => _remove(state),
+            onPressed: () => widget.removeWidget(widget.widgetId, id),
           ),
           Flexible(
             child: Row(
@@ -113,11 +121,12 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
           ),
           Flexible(
             child: TextField(
+              controller: fieldNameController,
               onChanged: (value) {
                 setState(() {
                   fieldName = value;
                 });
-                _save(state);
+                _save();
               },
               decoration: InputDecoration(
                 label: const Text("field name"),
@@ -154,7 +163,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
             isAClass = false;
           }
         });
-        _save(state);
+        _save();
       },
       items: <String>['String', 'int', 'double', 'DateTime', 'Class'].map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
@@ -168,6 +177,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
   /// Class select
 
   Widget classSelector(ClassMakerProvider state, List<String> classesAsStrings) {
+    if(classesAsStrings.isEmpty) classesAsStrings = ['Choose A Class!'];
     return DropdownButton<String>(
       value: whichClass,
       // icon: const Icon(Icons.arrow_downward),
@@ -182,9 +192,9 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
         setState(() {
           whichClass = newValue!;
         });
-        _save(state);
+        _save();
       },
-      items: classesAsStrings.map<DropdownMenuItem<String>>((String value) {
+      items: ['Choose A Class!', ...classesAsStrings].map<DropdownMenuItem<String>>((String value) {
         print("classes as strings: $value");
         return DropdownMenuItem<String>(
           value: value,
@@ -216,7 +226,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
             isAList = false;
           }
         });
-        _save(state);
+        _save();
       },
       items: <String>['Singular', 'List'].map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(

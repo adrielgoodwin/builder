@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import '../../models/nameValueType.dart';
 import '../data-classes/$className.dart';
 import '../forms/${className}Form.dart';
+import '../io_app/widgets/recordDisplays.dart';
+
 """;
 
 
@@ -104,19 +106,13 @@ class _${className}RecordsState extends State<${className}Records> {
         children: [
           ...nvt
               .map(
-                (e) => Column(
-                  children: [
-                    Text(
-                      "\${e.name}:",
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 18),
-                    ),
-                    Text("\${e.value}", style: const TextStyle(fontSize: 18)),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
-                ),
+                (e) {
+                  if (e.isAList) {
+                    return isAListDisplay(e);
+                  } else {
+                    return isNotAListDisplay(e);
+                  }
+                }
               )
               .toList()
         ],

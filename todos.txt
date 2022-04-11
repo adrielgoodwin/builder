@@ -1,10 +1,40 @@
+
+April 11th
+1. Support for records to show some data when isAClass.
+ a) ~DONE!~ Add is A list && is a class to NameValueType**
+ b) ~DONE!~ ** update NameValueType in dataClassGenerator to include isAClass and isAList
+ c) ~DONE!~ Build widgets for each scenario
+2. On the input forms:
+ a) ~DONE!~ a label for the class search and
+ b) larger/better located text for search results.
+ c) results showing in a row
+ d) remove '}' from add new form button
+3. ~DONE!~ Stop a class from being written if:
+ a) ~DONE!~ Its name is less than 2 characters
+ b) ~DONE!~ It has less than 2 fields
+4. When making a class, Automatically put a name field.
+5. ~DONE!~ Stop a field from being added if its name is a duplicate of another field
+6. ~DONE!~ Make update fields work. Right now the 'no duplicates' check is stopping updates.
+added another check to see if its a different id, if its not, the update works. :)
+
+
+More stuff to do
+1. Move Write file functions into their own file
+2. Initialize from registry on app load
+3. Make ui more friendly with messages
+ a) class must be 'x' length (on unfocus)
+ b) cant have two field with same name (on unfocus)
+ c) fields must have 'x' length
+ d) class must have 'x' fields
+
+
 April 5th 2022, Cafe Canela, Puerto Vallarta, with Katia Dorantes
 
 Things to be done, not in any real order
 
 
 *** Fails when adding a second class.
-Probably need to clear the
+
 
 
 ~ DONE ~ -Install Android Emulator

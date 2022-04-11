@@ -25,7 +25,6 @@ class DataClassComposer {
 
   String composeFromClassData(ClassData classData) {
     this.classData = classData;
-    this.classData.fieldData.add(FieldData(parentClass: classData.name, type: 'String', id: 'id', name: 'id', description: 'the id', isAClass: false, isAList: false));
     go();
     return makeFile();
   }
@@ -90,7 +89,15 @@ class DataClassComposer {
   void generateNameValueType() {
     nameValueType.add("  List<NameValueType> get fieldsAndValues => [\n");
     for(var y in classData.fieldData) {
-      nameValueType.add("      NameValueType('${y.name}', ${y.name}, '${y.type}'),\n");
+      if(y.isAList && y.isAClass) {
+        nameValueType.add("      NameValueType('${y.name}', ${y.name.paramify()}.map((e) => '\${e.name}').toList() , '${y.type}', ${y.isAList}, ${y.isAClass}), \n");
+      } else if(y.isAList) {
+        nameValueType.add("      NameValueType('${y.name}', ${y.name.paramify()}.map((e) => '\$e').toList() , '${y.type}', ${y.isAList}, ${y.isAClass}), \n");
+      } else if(y.isAClass) {
+        nameValueType.add("      NameValueType('${y.name}', ${y.name.paramify()}.name, 'String', ${y.isAList}, ${y.isAClass}), \n");
+      } else {
+        nameValueType.add("      NameValueType('${y.name}', ${y.name.paramify()}, '${y.type}', ${y.isAList}, ${y.isAClass}), \n");
+      }
     }
     nameValueType.add("  ];");
   }

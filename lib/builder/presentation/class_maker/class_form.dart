@@ -30,20 +30,51 @@ class _ClassFormState extends State<ClassForm> {
     // TODO: implement initState
     super.initState();
     classData = widget.classData;
+    if(classData.fieldData.isNotEmpty) {
+      /// dont think this is neccesarry but maybe
+      var fieldDatas = classData.fieldData;
+      fieldDatas.removeWhere((element) => element.name == 'id');
+      for(var fieldData in fieldDatas) {
+        _addExistingFieldWidget(fieldData);
+      }
+    } else {
+      _addNewFieldWidget();
+    }
+    /// Set fields
   }
 
-  void removeWidget(String id) {
-    fieldWidgets.removeWhere((key, value) => key == id);
-    classData.fieldData.removeWhere((element) => element.id == id);
+  bool fieldExists(String fieldName, String id) {
+    for(var y in classData.fieldData) {
+      if(y.name == fieldName && y.id != id){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void removeWidget(String widgetId, String fieldId) {
+    setState(() {
+      fieldWidgets.removeWhere((key, value) => key == widgetId);
+      classData.fieldData.removeWhere((field) => field.id == fieldId);
+    });
+  }
+
+  void _addExistingFieldWidget(FieldData fieldData) {
+    var widgetId = uuid.v1();
+    setState(() {
+      fieldWidgets[widgetId] = ClassFieldInput(parentClass: classData.name, fieldExists: fieldExists, widgetId: widgetId, removeWidget: removeWidget, updateFieldData: _updateFieldData, fieldData: fieldData);
+    });
   }
 
   void _addNewFieldWidget() {
     var id = uuid.v1();
+    var widgetId = uuid.v1();
     setState(() {
-      var fieldData = FieldData(parentClass: classData.name, type: 'String', id: id, name: 'newField', description: 'description', isAClass: false, isAList: false);
-      fieldWidgets[id] = ClassFieldInput(
+      var fieldData = FieldData(parentClass: classData.name, type: 'String', id: id, name: 'name', description: 'description', isAClass: false, isAList: false);
+      fieldWidgets[widgetId] = ClassFieldInput(
+        fieldExists: fieldExists,
         parentClass: classData.name,
-        id: id,
+        widgetId: widgetId,
         fieldData: fieldData,
         removeWidget: removeWidget,
         updateFieldData: _updateFieldData,
@@ -92,13 +123,14 @@ class _ClassFormState extends State<ClassForm> {
 
   @override
   Widget build(BuildContext context) {
-    var state = Provider.of<ClassMakerProvider>(context);
+    var saveAndWriteFiles = Provider.of<ClassMakerProvider>(context, listen: false).saveAndWriteFiles;
+    var deleteClass = Provider.of<ClassMakerProvider>(context, listen: false).deleteClass;
     return Padding(
       padding: const EdgeInsets.all(28.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          classNameSetter(state),
+          classNameSetter(saveAndWriteFiles, deleteClass),
           newFields(),
           newFieldButton(),
         ],
@@ -108,7 +140,7 @@ class _ClassFormState extends State<ClassForm> {
 
   /// Class name setter
 
-  Widget classNameSetter(ClassMakerProvider state) {
+  Widget classNameSetter(Function saveAndWriteFile, Function deleteClass) {
     return Flexible(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -150,7 +182,11 @@ class _ClassFormState extends State<ClassForm> {
             child: SizedBox(
               width: 150,
               child: ElevatedButton(
-                onPressed: () => state.writeFiles(),
+                onPressed: () {
+                  if(classData.name.length >= 2 && classData.fieldData.length > 2) {
+                    saveAndWriteFile(classData);
+                  }
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: const [
@@ -166,7 +202,7 @@ class _ClassFormState extends State<ClassForm> {
             ),
           ),
           IconButton(
-              onPressed: () => state.deleteClass(classData),
+              onPressed: () => deleteClass(classData),
               icon: const Icon(
                 Icons.delete,
                 color: Colors.redAccent,

@@ -33,23 +33,30 @@ String makeCrud(ClassData c) {
   var cn = c.name.paramify();
   var cns = cn + "s";
   return """
+  ///_____________________________
+  /// $Cn 
+  
   Map<String, $Cn> _$cns = {};
 
   List<$Cn> get get$Cns => _$cns.values.toList();
 
-  $Cn get$Cn(String id) => _$cns[id]!;
+  $Cn get$Cn(String name) => _$cns[name]!;
 
   List<$Cn> get${Cns}ByName(String string) {
     return _$cns.values.where(($cn) => $cn.name.substring(0, string.length) == string).toList();
   }
+  
+  List<$Cn> get${Cns}ListByNameList(List<String> names) {
+    return get$Cns.where((element) => names.contains(element.name)).toList();
+  }
 
   void add$Cn($Cn $cn) {
-    _$cns.addAll({$cn.id: $cn});
+    _$cns.addAll({$cn.name: $cn});
     notifyListeners();
   }
 
   void remove$Cns($Cn $cn) {
-    _$cns.remove($cn.id);
+    _$cns.remove($cn.name);
     notifyListeners();
   }  
  """;
