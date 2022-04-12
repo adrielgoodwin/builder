@@ -24,15 +24,7 @@ import '../io_app/widgets/recordDisplays.dart';
 }
 
 class _${className}RecordsState extends State<${className}Records> {
-  bool formIsVisible = false;
 
-  void openForm() => setState(() {
-        formIsVisible = true;
-      });
-
-  void closeForm() => setState(() {
-        formIsVisible = false;
-      }); 
 """;
   var buildMethod = """  @override
   Widget build(BuildContext context) {
@@ -45,23 +37,12 @@ class _${className}RecordsState extends State<${className}Records> {
       child: Stack(
         children: [
           records(x),
-          form(formIsVisible),
         ],
       ),
     );
   }
 """;
 
-  var form = """  Widget form(bool visibility) {
-    return Visibility(
-      /// this
-      child: ${className}Form(
-        submitCallback: closeForm,
-      ),
-      visible: visibility,
-    );
-  }
-""";
 
   var recordsWidget = """  Widget records(List<$className> x) {
     return SizedBox(
@@ -72,19 +53,12 @@ class _${className}RecordsState extends State<${className}Records> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: [
-                  ...x.map((e) => recordCard(e.fieldsAndValues)).toList()
-                ],
+                children: 
+                  x.isNotEmpty ? x.map((e) => recordCard(e.fieldsAndValues)).toList() : [Center(child: Text('Nothin here. LongPress to open form', style: TextStyle(fontSize: 33),),)]
+                 ,
               ),
             ),
           ),
-          SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              child: Text("Add new $className}"),
-              onPressed: openForm,
-            ),
-          )
         ],
       ),
     );
@@ -95,8 +69,7 @@ class _${className}RecordsState extends State<${className}Records> {
   var recordCard = """Widget recordCard(List<NameValueType> nvt) {
   /// implement type later for different displays
   /// more metadata for more display differences,
-  /// eg. a row with two small values together
-  /// or not, just do it with the widget builder?
+  /// eg. a row with two small values together /// or not, just do it with the widget builder?
   return Card(
     shadowColor: Colors.amber,
     child: SizedBox(
@@ -122,6 +95,6 @@ class _${className}RecordsState extends State<${className}Records> {
 }
 """;
 
-  return [imports, widgetHead, buildMethod, form, recordsWidget, recordCard].join();
+  return [imports, widgetHead, buildMethod, recordsWidget, recordCard].join();
 
 }

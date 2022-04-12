@@ -217,16 +217,16 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
         height: 2,
         color: Colors.deepPurpleAccent,
       ),
-      onChanged: (String? newValue) {
+      onChanged: (newValue) {
         setState(() {
-          listOrSingle = newValue!;
           if (newValue == 'List') {
             isAList = true;
+            listOrSingle = 'List';
           } else if (newValue == 'Singular') {
             isAList = false;
+            listOrSingle = 'Singular';
           }
         });
-        _save();
       },
       items: <String>['Singular', 'List'].map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(

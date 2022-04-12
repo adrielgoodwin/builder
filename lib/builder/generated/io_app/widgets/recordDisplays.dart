@@ -10,7 +10,7 @@ Widget isNotAListDisplay(NameValueType e) {
             fontWeight: FontWeight.w600, fontSize: 18),
       ),
       Text(
-        "${e.value}:",
+        "${e.value}",
         style: const TextStyle(
             fontWeight: FontWeight.w500, fontSize: 18),
       ),

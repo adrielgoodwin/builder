@@ -49,6 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
 
+    var rebuiltMessage = Provider.of<ClassMakerProvider>(context).rebuiltMessage;
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -107,11 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
             flex: 10,
             child: PageView(
               controller: pageController,
-              children: const [
-                PageMakerScreen(),
-                ClassMakerScreen(),
-                WidgetMakerScreen(),
-                IoAppScreen(),
+              children: [
+                const PageMakerScreen(),
+                const ClassMakerScreen(),
+                const WidgetMakerScreen(),
+                IoAppScreen(rebuiltMessage: rebuiltMessage),
               ],
             ),
           ),

@@ -183,7 +183,7 @@ class _ClassFormState extends State<ClassForm> {
               width: 150,
               child: ElevatedButton(
                 onPressed: () {
-                  if(classData.name.length >= 2 && classData.fieldData.length > 2) {
+                  if(classData.name.length >= 2 && classData.fieldData.length >= 2) {
                     saveAndWriteFile(classData);
                   }
                 },

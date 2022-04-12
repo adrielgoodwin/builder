@@ -116,26 +116,19 @@ class DataClassComposer {
       // Check to see if its a class
       if (fieldData.isAClass) {
         if (fieldData.isAList) {
-          // Code for unpacking a list, which goes into function body
-          // eg. var suppliesList = data['supplies'];
-          //     List<Supplies> listOfSupplies = [];
-          //     for(var i = 0; i < suppliesList.length; i++){
-          //       listOfSupplies.add(Supplies.fromJson(suppliesList[i]));
-          //     }
-
           functionBody.add("    var ${fieldName.paramify()}List = data['$fieldName'];");
-          functionBody.add("    List<$fieldType> listOf${fieldName.classify()} = [];");
+          functionBody.add("    List<$fieldType> listOf${fieldType.classify()} = [];");
           functionBody.add("    for(var i = 0; i < ${fieldName.paramify()}List.length; i++){");
-          functionBody.add("      listOf${fieldName.classify()}.add($fieldType.fromJson(${fieldName.paramify()}List[i]));");
+          functionBody.add("      listOf${fieldType.classify()}.add($fieldType.fromJson(${fieldName.paramify()}List[i]));");
           functionBody.add("    }");
           // then reference this newly made list in the return
           // eg. supplies: listOfSupplies,
-          functionReturn.add("      ${fieldName.paramify()}: listOf${fieldName.classify()},");
+          functionReturn.add("      ${fieldName.paramify()}: listOf${fieldType.classify()},");
         } else {
           // if its a class, but not a list no addition to function body, only to return
 
           // eg. classData: ClassData.fromJson(data['classData']),
-          functionReturn.add("      ${fieldName.paramify()}: ${fieldName.classify()}.fromJson(data['$fieldName']),");
+          functionReturn.add("      ${fieldName.paramify()}: ${fieldType.classify()}.fromJson(data['$fieldName']),");
         }
       } else {
         if (fieldData.isAList) {

@@ -13,6 +13,8 @@ import '../data-classes/${classData.name}.dart';
 
 ''';
 
+  var littleSpace = "  SizedBox(height: 10,),\n";
+
   /// Check for search box requirements
   for(var y in classData.fieldData) {
     if(y.isAClass) imports += "import '../io_app/widgets/singleSearch.dart';\n";
@@ -21,9 +23,7 @@ import '../data-classes/${classData.name}.dart';
 
   String formHead = '''
 class ${classData.name}Form extends StatefulWidget {
-  const ${classData.name}Form({Key? key, required this.submitCallback}) : super(key: key);
-  
-  final Function submitCallback;
+  const ${classData.name}Form({Key? key}) : super(key: key);
   
   @override
   State<${classData.name}Form> createState() => _${classData.name}FormState();
@@ -97,8 +97,8 @@ class _${classData.name}FormState extends State<${classData.name}Form> {
         p.add${classData.name}(${classData.name}(
         $classInstantiationFields
         ));
-        widget.submitCallback();
       }
+      _formKey.currentState!.reset();
     },
   ),                
 ''';
@@ -109,14 +109,14 @@ class _${classData.name}FormState extends State<${classData.name}Form> {
 }  
 """;
 
-  return [imports, formHead, variables, formTop, inputs, submitButton, end].join();
+  return [imports, formHead, variables, formTop, inputs, littleSpace, submitButton, end].join();
 
 }
 
 String singleSearch(String fieldName, String className) {
   return """    SingleSearch(dataSet: existing${className}s, label: 'Choose a $fieldName', resultCallback: (value) {
       setState(() {
-        $fieldName = p.get${fieldName.classify()}(value);
+        $fieldName = p.get${className.classify()}(value);
       });
     }),
 """;
