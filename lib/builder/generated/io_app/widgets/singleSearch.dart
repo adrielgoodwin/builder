@@ -22,7 +22,7 @@ class _SingleSearchState extends State<SingleSearch> {
     setState(() {
       /// check if search is empty so theres no 'left-overs'
       if(searchValue.isEmpty) {
-        searchResults = [];
+        searchResults = widget.dataSet;
       } else {
         searchResults = widget.dataSet.where((item) {
           /// filter out anything too short
@@ -52,6 +52,12 @@ class _SingleSearchState extends State<SingleSearch> {
       searchResults = [];
     });
     widget.resultCallback(e);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchResults = widget.dataSet;
   }
 
   List<String> searchResults = [];

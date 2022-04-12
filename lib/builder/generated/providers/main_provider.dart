@@ -1,9 +1,31 @@
 import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import '../../write_files_api.dart';
 import '../data-classes/InventoryItem.dart';
-import '../data-classes/Unit.dart';
-import '../data-classes/Recipe.dart'; 
-
+import '../data-classes/Thingy.dart';
+import '../data-classes/Thangy.dart'; 
 class MainProvider with ChangeNotifier {
+
+  Map<String, Map<String, dynamic>> db = {
+    "InventoryItems": {},
+    "Thingys": {},
+    "Thangys": {},
+  };
+
+  Future loadDB() async {
+    String jasonResponse = await sendReadRequest(Paths.database);
+    Map<String, dynamic> map = json.decode(jasonResponse); 
+    db = map.map((key, value) => MapEntry(key, value as Map<String, dynamic>)); 
+    loadInventoryItems(map["InventoryItems"]);
+    loadThingys(map["Thingys"]);
+    loadThangys(map["Thangys"]);
+  }
+
+  Future writeDB() async {
+    var ftw = FileToWrite(name: "", fileLocation: Paths.database, code: json.encode(db));
+    await sendWriteRequest(ftw);
+  }
+
   ///_____________________________
   /// InventoryItem 
   
@@ -24,62 +46,101 @@ class MainProvider with ChangeNotifier {
   void addInventoryItem(InventoryItem inventoryItem) {
     _inventoryItems.addAll({inventoryItem.name: inventoryItem});
     notifyListeners();
+    Map<String, Map<String, dynamic>> items = {};
+    _inventoryItems.forEach((key, value) {
+      items.addAll({key: value.toMap()});
+    });
+    db["InventoryItems"] = items;
+    writeDB();
+  }
+  
+  void loadInventoryItems(Map<String, dynamic> map) {
+    var newMap = map.map((key, value) => MapEntry(key, InventoryItem.fromJson(value as Map<String, dynamic>)));
+    _inventoryItems = newMap;
+    notifyListeners();
   }
 
   void removeInventoryItems(InventoryItem inventoryItem) {
     _inventoryItems.remove(inventoryItem.name);
     notifyListeners();
   }  
+  
    ///_____________________________
-  /// Unit 
+  /// Thingy 
   
-  Map<String, Unit> _units = {};
+  Map<String, Thingy> _thingys = {};
 
-  List<Unit> get getUnits => _units.values.toList();
+  List<Thingy> get getThingys => _thingys.values.toList();
 
-  Unit getUnit(String name) => _units[name]!;
+  Thingy getThingy(String name) => _thingys[name]!;
 
-  List<Unit> getUnitsByName(String string) {
-    return _units.values.where((unit) => unit.name.substring(0, string.length) == string).toList();
+  List<Thingy> getThingysByName(String string) {
+    return _thingys.values.where((thingy) => thingy.name.substring(0, string.length) == string).toList();
   }
   
-  List<Unit> getUnitsListByNameList(List<String> names) {
-    return getUnits.where((element) => names.contains(element.name)).toList();
+  List<Thingy> getThingysListByNameList(List<String> names) {
+    return getThingys.where((element) => names.contains(element.name)).toList();
   }
 
-  void addUnit(Unit unit) {
-    _units.addAll({unit.name: unit});
+  void addThingy(Thingy thingy) {
+    _thingys.addAll({thingy.name: thingy});
+    notifyListeners();
+    Map<String, Map<String, dynamic>> items = {};
+    _thingys.forEach((key, value) {
+      items.addAll({key: value.toMap()});
+    });
+    db["Thingys"] = items;
+    writeDB();
+  }
+  
+  void loadThingys(Map<String, dynamic> map) {
+    var newMap = map.map((key, value) => MapEntry(key, Thingy.fromJson(value as Map<String, dynamic>)));
+    _thingys = newMap;
     notifyListeners();
   }
 
-  void removeUnits(Unit unit) {
-    _units.remove(unit.name);
+  void removeThingys(Thingy thingy) {
+    _thingys.remove(thingy.name);
     notifyListeners();
   }  
+  
    ///_____________________________
-  /// Recipe 
+  /// Thangy 
   
-  Map<String, Recipe> _recipes = {};
+  Map<String, Thangy> _thangys = {};
 
-  List<Recipe> get getRecipes => _recipes.values.toList();
+  List<Thangy> get getThangys => _thangys.values.toList();
 
-  Recipe getRecipe(String name) => _recipes[name]!;
+  Thangy getThangy(String name) => _thangys[name]!;
 
-  List<Recipe> getRecipesByName(String string) {
-    return _recipes.values.where((recipe) => recipe.name.substring(0, string.length) == string).toList();
+  List<Thangy> getThangysByName(String string) {
+    return _thangys.values.where((thangy) => thangy.name.substring(0, string.length) == string).toList();
   }
   
-  List<Recipe> getRecipesListByNameList(List<String> names) {
-    return getRecipes.where((element) => names.contains(element.name)).toList();
+  List<Thangy> getThangysListByNameList(List<String> names) {
+    return getThangys.where((element) => names.contains(element.name)).toList();
   }
 
-  void addRecipe(Recipe recipe) {
-    _recipes.addAll({recipe.name: recipe});
+  void addThangy(Thangy thangy) {
+    _thangys.addAll({thangy.name: thangy});
+    notifyListeners();
+    Map<String, Map<String, dynamic>> items = {};
+    _thangys.forEach((key, value) {
+      items.addAll({key: value.toMap()});
+    });
+    db["Thangys"] = items;
+    writeDB();
+  }
+  
+  void loadThangys(Map<String, dynamic> map) {
+    var newMap = map.map((key, value) => MapEntry(key, Thangy.fromJson(value as Map<String, dynamic>)));
+    _thangys = newMap;
     notifyListeners();
   }
 
-  void removeRecipes(Recipe recipe) {
-    _recipes.remove(recipe.name);
+  void removeThangys(Thangy thangy) {
+    _thangys.remove(thangy.name);
     notifyListeners();
   }  
+  
  }

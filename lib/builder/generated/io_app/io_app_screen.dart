@@ -1,12 +1,13 @@
 import "package:flutter/material.dart";
 import '../../state/class_maker_provider.dart';
 import 'package:provider/provider.dart';
+import '../providers/main_provider.dart';
 import '../record_displays/InventoryItemRecords.dart';
 import '../forms/InventoryItemForm.dart';
-import '../record_displays/UnitRecords.dart';
-import '../forms/UnitForm.dart';
-import '../record_displays/RecipeRecords.dart';
-import '../forms/RecipeForm.dart';
+import '../record_displays/ThingyRecords.dart';
+import '../forms/ThingyForm.dart';
+import '../record_displays/ThangyRecords.dart';
+import '../forms/ThangyForm.dart';
 class IoAppScreen extends StatefulWidget {
   IoAppScreen({Key? key, required this.rebuiltMessage}) : super(key: key);
 
@@ -20,7 +21,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
   var formPageController = PageController();
   var selectedClassIndex = 0;
   var selectedFormIndex = 0;
-  var classes = ['InventoryItem', 'Unit', 'Recipe', ];
+  var classes = ['InventoryItem', 'Thingy', 'Thangy', ];
 @override
   Widget build(BuildContext context) {
     var rebuildMessage = Provider.of<ClassMakerProvider>(context).rebuiltMessage;
@@ -31,6 +32,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
           child: ListView(
             children: [
             Text(rebuildMessage),
+            TextButton(child: Text("load"), onPressed: () => Provider.of<MainProvider>(context, listen: false).loadDB(),),
               ...classes.map((e) => classListItem(e)).toList(),
             ],
           )
@@ -42,8 +44,8 @@ class _IoAppScreenState extends State<IoAppScreen> {
             controller: recordPageController,
             children: const [   
               InventoryItemRecords(),
-              UnitRecords(),
-              RecipeRecords(),
+              ThingyRecords(),
+              ThangyRecords(),
             ],
           ),
         ), 
@@ -55,8 +57,8 @@ class _IoAppScreenState extends State<IoAppScreen> {
               Center(child: Text('=)'),),
 
               InventoryItemForm(),
-              UnitForm(),
-              RecipeForm(),
+              ThingyForm(),
+              ThangyForm(),
             ],
           ),
         ),

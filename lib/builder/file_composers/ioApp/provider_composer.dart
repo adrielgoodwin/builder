@@ -11,11 +11,35 @@ String composeProvider(List<ClassData> classDatas) {
 
   /// Imports
   components.add("""import 'package:flutter/cupertino.dart';
-$imports \n
-""");
+import 'dart:convert';
+import '../../write_files_api.dart';
+$imports \n""");
 
   /// Provider name or whatevs
-  components.add("class MainProvider with ChangeNotifier {\n");
+  components.add("class MainProvider with ChangeNotifier {\n\n");
+
+  /// Database stuff
+  var db = "  Map<String, Map<String, dynamic>> db = {\n";
+  db += classDatas.map((e) => '    "${e.name}s": {},\n').toList().join();
+  db += "  };\n\n";
+  components.add(db);
+
+  var loadDb = """ 
+  Future loadDB() async {
+    String jasonResponse = await sendReadRequest(Paths.database);
+    Map<String, dynamic> map = json.decode(jasonResponse); 
+    db = map.map((key, value) => MapEntry(key, value as Map<String, dynamic>)); 
+""";
+  loadDb += classDatas.map((e) => '    load${e.name}s(map["${e.name}s"]);\n').toList().join();
+  loadDb += "  }\n\n";
+  components.add(loadDb);
+
+  var writeDB = """ 
+  Future writeDB() async {
+    var ftw = FileToWrite(name: "", fileLocation: Paths.database, code: json.encode(db));
+    await sendWriteRequest(ftw);
+  }\n\n""";
+  components.add(writeDB);
 
   var cruds = c.map((e) => makeCrud(e)).toList().join();
 
@@ -53,11 +77,24 @@ String makeCrud(ClassData c) {
   void add$Cn($Cn $cn) {
     _$cns.addAll({$cn.name: $cn});
     notifyListeners();
+    Map<String, Map<String, dynamic>> items = {};
+    _$cns.forEach((key, value) {
+      items.addAll({key: value.toMap()});
+    });
+    db["$Cns"] = items;
+    writeDB();
+  }
+  
+  void load$Cns(Map<String, dynamic> map) {
+    var newMap = map.map((key, value) => MapEntry(key, $Cn.fromJson(value as Map<String, dynamic>)));
+    _$cns = newMap;
+    notifyListeners();
   }
 
   void remove$Cns($Cn $cn) {
     _$cns.remove($cn.name);
     notifyListeners();
   }  
+  
  """;
 }

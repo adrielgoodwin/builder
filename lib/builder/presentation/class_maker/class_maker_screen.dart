@@ -43,7 +43,7 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
           children: [
             Flexible(
               fit: FlexFit.loose,
-              flex: 1,
+              flex: 3,
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -54,7 +54,7 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
               ),
             ),
             Flexible(
-              flex: 7,
+              flex: 9,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -66,12 +66,6 @@ class _ClassMakerScreenState extends State<ClassMakerScreen> {
                           ..._buildClassForms(newAppClasses),
                         ],
                       ),
-                    ),
-                  ),
-                  const Flexible(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      child: ResultDisplay(),
                     ),
                   ),
                 ],
@@ -149,10 +143,12 @@ Widget sidebarClassItem(ClassData classData) {
           ),
         ),
         ...fieldDatas.map((e) {
+          String type = "";
+          e.isAList ? type = "List<${e.type}>" : type = e.type ;
           return Row(
             children: [
               Text(
-                "  ${e.type}",
+                "  $type",
                 style: TextStyle(fontSize: 18, color: C.teal, fontWeight: FontWeight.w400),
               ),
               Text(

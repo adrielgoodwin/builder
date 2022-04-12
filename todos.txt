@@ -8,15 +8,18 @@ April 11th
  a) ~DONE!~ a label for the class search and
  b) larger/better located text for search results.
  c) results showing in a row
- d) remove '}' from add new form button
+ d) ~DONE!~  remove '}' from add new form button
 3. ~DONE!~ Stop a class from being written if:
  a) ~DONE!~ Its name is less than 2 characters
  b) ~DONE!~ It has less than 2 fields
-4. When making a class, Automatically put a name field.
+4. ~DONE!~  When making a class, Automatically put a name field.
 5. ~DONE!~ Stop a field from being added if its name is a duplicate of another field
 6. ~DONE!~ Make update fields work. Right now the 'no duplicates' check is stopping updates.
 added another check to see if its a different id, if its not, the update works. :)
 
+April 12th
+1. ~DONE!~ Make some local JSON storage for IOApp
+2. Fix ClassMaker delete button so it works
 
 More stuff to do
 1. Move Write file functions into their own file

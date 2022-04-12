@@ -18,6 +18,7 @@ class Paths {
   static const ioForms = 'lib/builder/generated/forms/';
   static const ioRecordDisplays = 'lib/builder/generated/record_displays/';
   static const ioAppScreen = 'lib/builder/generated/io_app/';
+  static const database = 'lib/builder/generated/io_app/database.json';
 }
 
 class NewProjectPaths {

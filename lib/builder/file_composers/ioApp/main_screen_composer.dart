@@ -5,6 +5,7 @@ String composeMainIOAppScreen(List<ClassData> classDatas) {
   String imports = '''import "package:flutter/material.dart";
 import '../../state/class_maker_provider.dart';
 import 'package:provider/provider.dart';
+import '../providers/main_provider.dart';
 ''';
   String widgetHead = """
 class IoAppScreen extends StatefulWidget {
@@ -35,6 +36,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
           child: ListView(
             children: [
             Text(rebuildMessage),
+            TextButton(child: Text("load"), onPressed: () => Provider.of<MainProvider>(context, listen: false).loadDB(),),
               ...classes.map((e) => classListItem(e)).toList(),
             ],
           )

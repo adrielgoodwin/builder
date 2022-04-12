@@ -22,7 +22,7 @@ class _MultiSearchState extends State<MultiSearch> {
     setState(() {
       /// check if search is empty so theres no 'left-overs'
       if(searchValue.isEmpty) {
-        searchResults = [];
+        searchResults = widget.dataSet;
       } else {
         searchResults = widget.dataSet.where((item) {
           /// filter out anything too short
@@ -46,10 +46,17 @@ class _MultiSearchState extends State<MultiSearch> {
   }
 
   void selectResult(String e) {
-    setState(() {
-      selectedResults.add(e);
-    });
-    widget.resultCallback(selectedResults);
+      setState(() {
+        selectedResults.add(e);
+        searchResults.remove(e);
+      });
+      widget.resultCallback(selectedResults);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    searchResults = widget.dataSet;
   }
 
   List<String> searchResults = [];
