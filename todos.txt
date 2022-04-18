@@ -19,7 +19,29 @@ added another check to see if its a different id, if its not, the update works. 
 
 April 12th
 1. ~DONE!~ Make some local JSON storage for IOApp
+April 13th
 2. Fix ClassMaker delete button so it works
+ a) ui shows progress circle
+ b) associated files are removed
+    - classData - form - record
+ c) registry is updated
+ d) provider is reWritten
+ e) Ui updates to delete class from list
+3.~DONE!~ Re-familiarize with widget builder
+4.~DONE!~ ensure classes have a capital letter
+5. add to state after completed
+6. Rewrite class maker to be more readable and work properly
+7. Check to see if having the state of new classes list in the class editors widget
+will 'save' them when navigating away.
+8. Update entry when name changes
+
+Widget builder functionality
+1. Link Data from classes to Text Widgets
+
+'Existing' widgets to leverage
+List-Tile
+
+
 
 More stuff to do
 1. Move Write file functions into their own file

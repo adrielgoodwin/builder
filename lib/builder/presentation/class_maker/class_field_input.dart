@@ -70,7 +70,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
   Widget build(BuildContext context) {
     var state = Provider.of<ClassMakerProvider>(context);
 
-    List<String> classesAsStrings = state.newAppClasses.isNotEmpty ? state.newAppClasses.map((e) => e.name).toList() : ['No classes yet'];
+    List<String> classesAsStrings = state.existingClasses.isNotEmpty ? state.existingClasses.map((e) => e.name).toList() : ['No classes yet'];
 
     if (!hasInit) {
       whichClass = classesAsStrings[0];

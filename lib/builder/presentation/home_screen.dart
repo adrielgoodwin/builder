@@ -8,6 +8,9 @@ import 'class_maker/class_maker_screen.dart';
 import 'widget_maker/widget_maker_screen.dart';
 import '/builder/colors/colors.dart';
 
+// open world
+import '../../openWorld/open_world_homepage.dart';
+
 import 'package:provider/provider.dart';
 
 import '../state/class_maker_provider.dart';
@@ -25,7 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
   PageController pageController = PageController();
 
   int currentIndex = 0;
-  List<String> titles = ["Page Maker", "Class Maker", "Widget Maker", "Builder Class Maker"];
 
   void animateTo(int page) {
     setState(() {
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     pageController.animateToPage(page, duration: const Duration(milliseconds: 777), curve: Curves.easeInOut);
   }
+  List<String> titles = ["Page Maker", "Class Maker", "Widget Maker", "Builder Class Maker", "openWorld"];
 
   Color color(int indexOfItem) => currentIndex == indexOfItem ? C.gold : Colors.black87;
 
@@ -101,6 +104,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.medical_services_outlined,
                         color: color(3),
                       )),
+                  IconButton(
+                      onPressed: () {
+                        animateTo(4);
+                      },
+                      icon: Icon(
+                        Icons.star,
+                        color: color(3),
+                      )),
                 ],
               ),
             ),
@@ -114,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const ClassMakerScreen(),
                 const WidgetMakerScreen(),
                 IoAppScreen(rebuiltMessage: rebuiltMessage),
+                const OpenWorldHomepage(),
               ],
             ),
           ),

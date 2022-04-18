@@ -37,3 +37,36 @@ extension StringExtension on String {
     return "";
   }
 }
+
+String formatClassName(String value) {
+  List<int> spaces = indexesOfAll(value, " ");
+  String formattedClassName = "";
+  for (var i = 0; i < spaces.length; i++) {
+    String segment;
+    // check to see if we are at beginning
+    if (i == 0) {
+      segment = [value.substring(0, spaces[0]), value.substring(spaces[0], spaces[0] + 1).toUpperCase()].join("");
+    } else {
+      segment = [value.substring(spaces[i - 1], spaces[i]), value.substring(spaces[i], spaces[i] + 1).toUpperCase()].join("");
+    }
+    formattedClassName += segment;
+  }
+  return formattedClassName;
+}
+
+List<int> indexesOfAll(String string, String thing) {
+  List<int> indexes = [];
+  var moreThings = true;
+  var index = 0;
+  var newIndex = 0;
+  while (moreThings) {
+    newIndex = string.indexOf(thing);
+    if (newIndex != -1) {
+      indexes = [...indexes, newIndex + index];
+      newIndex = string.substring(index + 1).indexOf(" ");
+    } else {
+      moreThings = false;
+    }
+  }
+  return indexes;
+}

@@ -25,50 +25,60 @@ class ClassMakerProvider with ChangeNotifier {
   /// This is the 'working memory spot' for adding or updating classes
   ///
 
-  Map<String, ClassData> _newAppClassesMap = {};
-  Map<String, ClassData> _builderClassesMap = {};
+  Map<String, ClassData> _existingClasses = {};
 
-  List<ClassData> get newAppClasses => _newAppClassesMap.values.toList();
+  Map<String, ClassData> _classesInCreation = {};
 
-  List<ClassData> get builderClasses => _builderClassesMap.values.toList();
+  List<ClassData> get classesInCreation => _classesInCreation.values.toList();
+
+  void addBlankClass() {
+    _classesInCreation.addAll({'NewClass': ClassData(name: 'NewClass', id: "", fieldData: [], neededImports: [])});
+    notifyListeners();
+  }
+
+  List<ClassData> get existingClasses => _existingClasses.values.toList();
 
   String addNewClass(ClassData classData) {
-    if (_newAppClassesMap.containsKey(classData.name)) {
+    if (_existingClasses.containsKey(classData.name)) {
       return "Already Exists";
     } else {
-      _newAppClassesMap.addAll({classData.id: classData});
+      _existingClasses.addAll({classData.name: classData});
+      _classesInCreation.remove(classData.name);
       notifyListeners();
       return "Created new class ${classData.name}";
     }
   }
 
   String updateClass(ClassData classData) {
-    _newAppClassesMap.update(classData.id, (value) => classData);
+    _existingClasses.update(classData.name, (value) => classData);
     notifyListeners();
     return "Updated ${classData.name}";
   }
 
-  void deleteClass(ClassData classData) {
-    _newAppClassesMap.remove(classData.id);
-    notifyListeners();
-  }
+  Future deleteClass(String className) async {
+    print("trying to delete: $className");
+    _existingClasses.forEach((key, value) {print(key);});
 
-  void removeNewAppClass(ClassData classData) {
-    if (_isForBuilder) {
-      _builderClassesMap.remove(classData.name);
-    } else {
-      _newAppClassesMap.remove(classData.name);
-    }
+    // Remove Class Data File
+    await sendDeleteRequest(Paths.dataClasses + className + '.dart');
+    // Remove Form File
+    await sendDeleteRequest(Paths.ioForms + className + 'Form.dart');
+    // Remove Record File
+    await sendDeleteRequest(Paths.ioRecordDisplays + className + 'Records.dart');
+    _existingClasses.remove(className);
+    writeRegistry();
+    writeProvider(existingClasses);
+    notifyListeners();
   }
 
   void loadClassesIntoMapFromRegistry() {
     for (var classRegister in _registry.registeredClasses) {
-      _newAppClassesMap[classRegister.classData.id] = classRegister.classData;
+      _existingClasses[classRegister.classData.id] = classRegister.classData;
     }
     // for (var classRegister in _builderRegistry.registeredClasses) {
     //   _builderClassesMap[classRegister.classData.id] = classRegister.classData;
     // }
-    print(_newAppClassesMap.values.toList());
+    print(_existingClasses.values.toList());
 
     notifyListeners();
   }
@@ -80,8 +90,6 @@ class ClassMakerProvider with ChangeNotifier {
   ///
 
   Registry _registry = Registry(appName: 'newApp', registeredClasses: []);
-  Registry _builderRegistry =
-      Registry(appName: 'builder', registeredClasses: []);
 
   Future loadRegistries() async {
     // var builderRegistryJsonString = await sendReadRequest(Paths.builderRegistry);
@@ -101,33 +109,22 @@ class ClassMakerProvider with ChangeNotifier {
     return await sendWriteRequest(fileToWrite);
   }
 
-  void registerNewClassForNewApp(ClassData classData) {
-    _registry = Registry(
-      appName: _registry.appName,
-      registeredClasses: [
-        ..._registry.registeredClasses,
-      ],
-    );
-  }
-
   void saveAndWriteFiles(ClassData newClassData) async {
     addNewClass(newClassData);
-    for (var classData in newAppClasses) {
+    for (var classData in existingClasses) {
       await writeClass(classData);
       await writeForm(classData);
       await writeRecordScreen(classData);
     }
     await writeRegistry();
-    await writeIOAppScreen(newAppClasses);
-    await writeProvider(newAppClasses);
-    _rebuiltMessage = "Rebuilt with ${newAppClasses.length} classes";
+    await writeIOAppScreen(existingClasses);
+    await writeProvider(existingClasses);
+    _rebuiltMessage = "Rebuilt with ${existingClasses.length} classes";
     notifyListeners();
   }
 
-
-
   Future writeRegistry() async {
-    var registeredClasses = _newAppClassesMap.values
+    var registeredClasses = _existingClasses.values
         .map((e) =>
             ClassRegister(classData: e, dateModified: '', isMainRequest: false))
         .toList();
@@ -183,7 +180,7 @@ class ClassMakerProvider with ChangeNotifier {
   }
 
   Future writeIOAppScreen(List<ClassData> classDatas) async {
-    var ioAppScreenCode = composeMainIOAppScreen(newAppClasses);
+    var ioAppScreenCode = composeMainIOAppScreen(classDatas);
     var ftw = FileToWrite(
         name: 'io_app_screen.dart',
         fileLocation: Paths.ioAppScreen,

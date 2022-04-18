@@ -65,7 +65,7 @@ class _TextParametersState extends State<TextParameters> {
   Widget build(BuildContext context) {
 
     var classState = Provider.of<ClassMakerProvider>(context);
-    var nac = classState.newAppClasses;
+    var nac = classState.existingClasses;
 
     return Container(
       child: Column(

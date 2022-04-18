@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class Endpoints {
   static var writeFile = Uri.parse('http://localhost:5000/writeFile');
   static var readFile = Uri.parse('http://localhost:5000/readFile');
-  static var cleanDir = Uri.parse('http://localhost:8001/cleanDirectory');
+  static var deleteFile = Uri.parse('http://localhost:5000/deleteFile');
 }
 
 class Paths {
@@ -46,8 +46,12 @@ class FileToWrite {
   }
 }
 
-Future sendCleanDirectoryRequest(List<String> goodFiles) async {
-  await http.post(Endpoints.cleanDir, body: jsonEncode({"goodFiles": goodFiles}));
+Future sendDeleteRequest(String path) async {
+  var pathNPass = {
+    'password': 'whoobilybhoobily',
+    'path': path,
+  };
+  var response = await http.post(Endpoints.deleteFile, body: json.encode(pathNPass), headers: {'content-type': 'application/json'});
 }
 
 Future<bool> sendWriteRequest(FileToWrite fileToWrite) async {

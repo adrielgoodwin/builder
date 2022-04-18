@@ -2,12 +2,8 @@ import "package:flutter/material.dart";
 import '../../state/class_maker_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/main_provider.dart';
-import '../record_displays/InventoryItemRecords.dart';
-import '../forms/InventoryItemForm.dart';
-import '../record_displays/ThingyRecords.dart';
-import '../forms/ThingyForm.dart';
-import '../record_displays/ThangyRecords.dart';
-import '../forms/ThangyForm.dart';
+import '../record_displays/NewClassyRecords.dart';
+import '../forms/NewClassyForm.dart';
 class IoAppScreen extends StatefulWidget {
   IoAppScreen({Key? key, required this.rebuiltMessage}) : super(key: key);
 
@@ -21,7 +17,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
   var formPageController = PageController();
   var selectedClassIndex = 0;
   var selectedFormIndex = 0;
-  var classes = ['InventoryItem', 'Thingy', 'Thangy', ];
+  var classes = ['NewClassy', ];
 @override
   Widget build(BuildContext context) {
     var rebuildMessage = Provider.of<ClassMakerProvider>(context).rebuiltMessage;
@@ -43,9 +39,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
           child: PageView(
             controller: recordPageController,
             children: const [   
-              InventoryItemRecords(),
-              ThingyRecords(),
-              ThangyRecords(),
+              NewClassyRecords(),
             ],
           ),
         ), 
@@ -56,9 +50,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
             children: const [ 
               Center(child: Text('=)'),),
 
-              InventoryItemForm(),
-              ThingyForm(),
-              ThangyForm(),
+              NewClassyForm(),
             ],
           ),
         ),
