@@ -19,12 +19,13 @@ class ClassEditors extends StatefulWidget {
 
 class _ClassEditorsState extends State<ClassEditors> {
 
-
+  var scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     var state = Provider.of<ClassMakerProvider>(context);
     return SingleChildScrollView(
+      controller: scrollController,
       child: Column(
         children: [
           /// Class count and add new button

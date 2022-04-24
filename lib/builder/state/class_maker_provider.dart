@@ -12,6 +12,7 @@ import '../models/registry.dart';
 import '../write_files_api.dart';
 import '../file_composers/data_class_composer.dart';
 import '../file_composers/ioApp/form_composer.dart';
+import 'package:uuid/uuid.dart';
 
 class ClassMakerProvider with ChangeNotifier {
   bool _isForBuilder = false;
@@ -19,6 +20,8 @@ class ClassMakerProvider with ChangeNotifier {
   void setIsClassForBuilder(bool boolean) => _isForBuilder = boolean;
 
   bool get isForBuilder => _isForBuilder;
+
+  var uuid = const Uuid();
 
   ///
   /// ClassData map
@@ -32,40 +35,49 @@ class ClassMakerProvider with ChangeNotifier {
   List<ClassData> get classesInCreation => _classesInCreation.values.toList();
 
   void addBlankClass() {
-    _classesInCreation.addAll({'NewClass': ClassData(name: 'NewClass', id: "", fieldData: [], neededImports: [])});
+    var id = uuid.v1();
+    _classesInCreation.addAll({
+      id: ClassData(name: 'NewClass', id: id, fieldData: [], neededImports: [])
+    });
     notifyListeners();
   }
 
   List<ClassData> get existingClasses => _existingClasses.values.toList();
 
   String addNewClass(ClassData classData) {
-    if (_existingClasses.containsKey(classData.name)) {
-      return "Already Exists";
-    } else {
-      _existingClasses.addAll({classData.name: classData});
-      _classesInCreation.remove(classData.name);
-      notifyListeners();
-      return "Created new class ${classData.name}";
+    for (var c in _existingClasses.values) {
+      if (c.name == classData.name) {
+        return "Already Exists";
+      }
     }
+    printFieldDatas(classData);
+    _existingClasses.addAll({classData.id: classData});
+    _classesInCreation.remove(classData.id);
+    notifyListeners();
+    return "Created new class ${classData.name}";
   }
 
   String updateClass(ClassData classData) {
-    _existingClasses.update(classData.name, (value) => classData);
+    _existingClasses.update(classData.id, (value) => classData);
     notifyListeners();
     return "Updated ${classData.name}";
   }
 
-  Future deleteClass(String className) async {
+  Future deleteClass(ClassData classData) async {
+    var className = classData.name;
     print("trying to delete: $className");
-    _existingClasses.forEach((key, value) {print(key);});
+    _existingClasses.forEach((key, value) {
+      print(key);
+    });
 
     // Remove Class Data File
     await sendDeleteRequest(Paths.dataClasses + className + '.dart');
     // Remove Form File
     await sendDeleteRequest(Paths.ioForms + className + 'Form.dart');
     // Remove Record File
-    await sendDeleteRequest(Paths.ioRecordDisplays + className + 'Records.dart');
-    _existingClasses.remove(className);
+    await sendDeleteRequest(
+        Paths.ioRecordDisplays + className + 'Records.dart');
+    _existingClasses.remove(classData.id);
     writeRegistry();
     writeProvider(existingClasses);
     notifyListeners();
@@ -94,7 +106,7 @@ class ClassMakerProvider with ChangeNotifier {
   Future loadRegistries() async {
     // var builderRegistryJsonString = await sendReadRequest(Paths.builderRegistry);
     var dataClassesRegistryJsonString =
-        await sendReadRequest(Paths.dataClassesRegistry);
+    await sendReadRequest(Paths.dataClassesRegistry);
     // _registry = Registry.fromJson(jsonDecode(builderRegistryJsonString));
     _registry = Registry.fromJson(jsonDecode(dataClassesRegistryJsonString));
     loadClassesIntoMapFromRegistry();
@@ -111,22 +123,22 @@ class ClassMakerProvider with ChangeNotifier {
 
   void saveAndWriteFiles(ClassData newClassData) async {
     addNewClass(newClassData);
-    for (var classData in existingClasses) {
-      await writeClass(classData);
-      await writeForm(classData);
-      await writeRecordScreen(classData);
-    }
-    await writeRegistry();
-    await writeIOAppScreen(existingClasses);
-    await writeProvider(existingClasses);
+    // for (var classData in existingClasses) {
+    //   await writeClass(classData);
+    //   await writeForm(classData);
+    //   await writeRecordScreen(classData);
+    // }
+    // await writeRegistry();
+    // await writeIOAppScreen(existingClasses);
+    // await writeProvider(existingClasses);
     _rebuiltMessage = "Rebuilt with ${existingClasses.length} classes";
     notifyListeners();
   }
 
-  Future writeRegistry() async {
-    var registeredClasses = _existingClasses.values
+  Future writeRegistry(List<ClassData> classDatas) async {
+    var registeredClasses = classDatas
         .map((e) =>
-            ClassRegister(classData: e, dateModified: '', isMainRequest: false))
+        ClassRegister(classData: e, dateModified: ''))
         .toList();
     var newRegistry = Registry(
         appName: _registry.appName, registeredClasses: registeredClasses);
@@ -187,20 +199,21 @@ class ClassMakerProvider with ChangeNotifier {
         code: ioAppScreenCode);
     await sendWriteRequest(ftw);
   }
-/// IO SCREEN REBUILD
-String _rebuiltMessage = "";
+
+  /// IO SCREEN REBUILD
+  String _rebuiltMessage = "";
 
   String get rebuiltMessage => _rebuiltMessage;
 }
 
-
-
-
-
-
-
-
-
+void printFieldDatas(ClassData classData) {
+  print("~~~~~~~~~~~~~~");
+  print("Field Data for ${classData.name}:");
+  for(var f in classData.fieldData) {
+    print("    Name: ${f.name}, Type: ${f.type}, IsAList: ${f.isAList}, IsAClass: ${f.isAClass}");
+  }
+  print("~~~~~~~~~~~~~~\n");
+}
 
 /// Writing to file! Uhuuu!
 

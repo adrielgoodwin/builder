@@ -23,17 +23,20 @@ April 13th
 2. Fix ClassMaker delete button so it works
  a) ui shows progress circle
  b) associated files are removed
-    - classData - form - record
+    - classData - form - records
  c) registry is updated
  d) provider is reWritten
  e) Ui updates to delete class from list
 3.~DONE!~ Re-familiarize with widget builder
 4.~DONE!~ ensure classes have a capital letter
-5. add to state after completed
-6. Rewrite class maker to be more readable and work properly
-7. Check to see if having the state of new classes list in the class editors widget
+5.~DONE!~ add to state after completed
+6.~HALF DONE SEE BELOW!~ Rewrite class maker to be more readable and work properly
+7. ~DONE!~ Check to see if having the state of new classes list in the class editors widget
 will 'save' them when navigating away.
-8. Update entry when name changes
+
+April 19th
+1. Finish class maker to be usable.
+ a) ~DONE!~
 
 Widget builder functionality
 1. Link Data from classes to Text Widgets

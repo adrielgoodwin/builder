@@ -15,6 +15,8 @@ class MetaWidgetBuilderProvider with ChangeNotifier {
 
   Widget _builtTree = const SizedBox();
 
+  void addToBuildOrder(String newFork) => metaTree.addToBuildOrder(newFork);
+
   void addUpdateBranches(List<BranchNode> branchNodes) {
     for(var bn in branchNodes) {
       var asFlexible = bn as FlexibleNode;

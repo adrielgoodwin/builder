@@ -26,14 +26,11 @@ class _ClassFormState extends State<ClassForm> {
 
   late ClassData classData;
 
-  var classnameController = TextEditingController();
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     classData = widget.classData;
-    classnameController.text = classData.name;
     if(classData.fieldData.isNotEmpty) {
       /// dont think this is neccesarry but maybe
       var fieldDatas = classData.fieldData;
@@ -96,91 +93,14 @@ class _ClassFormState extends State<ClassForm> {
 
   @override
   Widget build(BuildContext context) {
-    var saveAndWriteFiles = Provider.of<ClassMakerProvider>(context, listen: false).saveAndWriteFiles;
-    var deleteClass = Provider.of<ClassMakerProvider>(context, listen: false).deleteClass;
     return Padding(
       padding: const EdgeInsets.all(28.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          classNameSetter(saveAndWriteFiles, deleteClass),
+          classNameSetter(classData: classData),
           newFields(),
           newFieldButton(),
-        ],
-      ),
-    );
-  }
-
-  /// Class name setter
-
-  Widget classNameSetter(Function saveAndWriteFile, Function deleteClass) {
-    return Flexible(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            flex: 3,
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: TextField(
-                    controller: classnameController,
-                    onChanged: (value) {
-                      setState(() {
-                        classData.name = [value.substring(0, 1).toUpperCase(), value.substring(1)].join();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      label: const Text("Class"),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 33,
-                ),
-                Flexible(
-                  flex: 4,
-                  child: Text(
-                    classData.name,
-                    style: const TextStyle(fontSize: 22),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Flexible(
-            child: SizedBox(
-              width: 150,
-              child: ElevatedButton(
-                onPressed: () {
-                  if(classData.name.length >= 2 && classData.fieldData.length >= 2) {
-                    saveAndWriteFile(classData);
-                  }
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    Flexible(flex: 5, child: Text("Save Class")),
-                    Flexible(
-                        child: Icon(
-                      Icons.done,
-                      color: Colors.green,
-                    )),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-              onPressed: () => deleteClass(classData.name),
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.redAccent,
-              ))
         ],
       ),
     );
@@ -214,3 +134,100 @@ class _ClassFormState extends State<ClassForm> {
     );
   }
 }
+
+class classNameSetter extends StatefulWidget {
+  const classNameSetter({Key? key, required this.classData}) : super(key: key);
+
+  final ClassData classData;
+
+  @override
+  State<classNameSetter> createState() => _classNameSetterState();
+}
+
+class _classNameSetterState extends State<classNameSetter> {
+  
+  var classNameController = TextEditingController();
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    classNameController.text = widget.classData.name;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    var state = Provider.of<ClassMakerProvider>(context);
+    return Flexible(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            flex: 3,
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 2,
+                  child: TextField(
+                    controller: classNameController,
+                    onChanged: (value) {
+                      setState(() {
+                        widget.classData.name = [value.substring(0, 1).toUpperCase(), value.substring(1)].join();
+                      });
+                    },
+                    decoration: InputDecoration(
+                      label: const Text("Class"),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 33,
+                ),
+                Flexible(
+                  flex: 4,
+                  child: Text(
+                    widget.classData.name,
+                    style: const TextStyle(fontSize: 22),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Flexible(
+            child: SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: () {
+                  if(widget.classData.name.length >= 2 && widget.classData.fieldData.length >= 2) {
+                    state.saveAndWriteFiles(widget.classData);
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: const [
+                    Flexible(flex: 5, child: Text("Save Class")),
+                    Flexible(
+                        child: Icon(
+                          Icons.done,
+                          color: Colors.green,
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+              onPressed: () => state.deleteClass(widget.classData),
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.redAccent,
+              ))
+        ],
+      ),
+    );
+  }
+}
+

@@ -89,11 +89,14 @@ class _RowParametersState extends State<RowParameters> {
           ],
         ),
         ElevatedButton(onPressed: () {
-          rf.addChildFlexible();
-        }, child: Text("Add Flexible")),
-        ElevatedButton(onPressed: () {
           rf.addTextChild();
-        }, child: Text("Add Text")),
+        }, child: const Text("Add Text")),
+        ElevatedButton(onPressed: () {
+          rf.addChildColumn();
+        }, child: const Text("Add Column")),
+        ElevatedButton(onPressed: () {
+          rf.addChildRow();
+        }, child: const Text("Add Row")),
       ],
     );
   }

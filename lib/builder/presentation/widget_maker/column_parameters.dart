@@ -94,6 +94,12 @@ class _ColumnParametersState extends State<ColumnParameters> {
           ElevatedButton(onPressed: () {
             cf.addTextChild();
           }, child: Text("Add Text")),
+          ElevatedButton(onPressed: () {
+            cf.addChildColumn();
+          }, child: Text("Add Column")),
+          ElevatedButton(onPressed: () {
+            cf.addChildRow();
+          }, child: Text("Add Row")),
         ],
       ),
     );
