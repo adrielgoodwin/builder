@@ -1,16 +1,26 @@
-# maker
+# who?
 
-an app that makes apps
+Maker, she is an app that makes apps for all platforms
 
-## Getting Started
+# why?
 
-This project is a starting point for a Flutter application.
+There are a bunch of apps I'd love to see exist in the world.
+As I have been programming over time, I'm always doing things slightly differently,
+causing bugs and headaches whenever a project expands past a certain point. 
+At some moment I realized that I could abstract myself out of the equation, and by defining the 
+data-classes and a few relationships I just generate the code of an application.
+For me this was an exciting, novel idea, so I just jumped right into it. 
+Turns out it is a little more complex than I anticipated (no suprise there), but my 
+dreams and interest in the puzzle-like aspects of the challenge drove me to continue.
+At this point It can only make simple applications with basic relationships. 
 
-A few resources to get you started if this is your first Flutter project:
+### examples and video explanations
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+You can find some examples in the examples folder.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<Youtube link to me explaining how easy it is> 
+  
+#### Components of an appmaker
+  
+   
+
