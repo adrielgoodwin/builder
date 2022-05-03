@@ -9,13 +9,11 @@ import 'package:uuid/uuid.dart';
 /// factor out state from functions where its not used anymore
 
 class ClassFieldInput extends StatefulWidget {
-  const ClassFieldInput({Key? key, required this.parentClass, required this.widgetId, required this.removeWidget, required this.fieldExists, required this.updateFieldData, required this.fieldData}) : super(key: key);
+  const ClassFieldInput({Key? key, required this.parentClassId, required this.widgetId, required this.removeWidget, required this.fieldData}) : super(key: key);
 
-  final String parentClass;
+  final String parentClassId;
   final FieldData? fieldData;
   final Function removeWidget;
-  final Function updateFieldData;
-  final Function fieldExists;
   final String widgetId;
 
   @override
@@ -60,10 +58,7 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
   }
 
   void _save() {
-    if(!widget.fieldExists(fieldName, id)) {
-      var fieldData = FieldData(parentClass: widget.parentClass, id: id, type: isAClass ? whichClass : fieldType, name: fieldName, description: 'description', isAClass: isAClass, isAList: isAList);
-      widget.updateFieldData(fieldData);
-    }
+    var fieldData = FieldData(parentClass: widget.parentClassId, id: id, type: isAClass ? whichClass : fieldType, name: fieldName, description: 'description', isAClass: isAClass, isAList: isAList);
   }
 
   @override
@@ -76,8 +71,8 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
       whichClass = classesAsStrings[0];
       if(fieldName.isNotEmpty) {
         setState(() {
-        fieldNameController.text = fieldName;
-      });
+          fieldNameController.text = fieldName;
+        });
       }
       hasInit = true;
     }
@@ -108,9 +103,9 @@ class _ClassFieldInputState extends State<ClassFieldInput> {
                   child: isAClass
                       ? classSelector(state, classesAsStrings)
                       : const SizedBox(
-                          height: 0,
-                          width: 0,
-                        ),
+                    height: 0,
+                    width: 0,
+                  ),
                   fit: FlexFit.loose,
                 ),
               ],

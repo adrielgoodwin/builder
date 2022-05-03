@@ -30,22 +30,6 @@ class NewProjectPaths {
   static const appRoot = "$newProjectName/app/";
 }
 
-class FileToWrite {
-  FileToWrite({required this.name, required this.fileLocation, required this.code});
-
-  final String name;
-  final String fileLocation;
-  final String code;
-
-  Map<String, String> toMap() {
-    return {
-      "name": name,
-      "path": fileLocation,
-      "code": code,
-    };
-  }
-}
-
 Future sendDeleteRequest(String path) async {
   var pathNPass = {
     'password': 'whoobilybhoobily',
@@ -54,11 +38,10 @@ Future sendDeleteRequest(String path) async {
   var response = await http.post(Endpoints.deleteFile, body: json.encode(pathNPass), headers: {'content-type': 'application/json'});
 }
 
-Future<bool> sendWriteRequest(FileToWrite fileToWrite) async {
+Future<bool> sendWriteRequest({required String path, required String code}) async {
   var pathNCode = {
-    'path': fileToWrite.fileLocation + fileToWrite.name,
-    'code': fileToWrite.code,
-    'password': 'whoobilybhoobily',
+    'path': path,
+    'code': code,
   };
   var response = await http.post(Endpoints.writeFile, body: json.encode(pathNCode), headers: {'content-type': 'application/json'});
 
@@ -71,5 +54,6 @@ Future<String> sendReadRequest(String path) async {
   ), headers: {'content-type': 'application/json'});
   // Map<String, dynamic> jsonMap = jsonDecode(response.body);
   // return jsonMap['code'];
+  print(response.body);
   return response.body;
 }

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:builder/builder/presentation/class_maker/class_form.dart';
+import 'package:builder/builder/presentation/class_maker/existingClassForm.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -9,9 +9,9 @@ import '../../models/class_data.dart';
 import '../../models/field_data.dart';
 
 /// Widgets
-import 'class_field_input.dart';
+import 'new_class_field_input.dart';
 import 'result_display.dart';
-import 'class_form.dart';
+import 'existingClassForm.dart';
 import 'sidebar.dart';
 import 'class_editors.dart';
 

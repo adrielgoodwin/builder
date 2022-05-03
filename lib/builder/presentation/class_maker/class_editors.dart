@@ -8,7 +8,8 @@ import '../../state/class_maker_provider.dart';
 import '../../models/class_data.dart';
 
 // Widgets
-import 'class_form.dart';
+import 'existingClassForm.dart';
+import 'newClassForm.dart';
 
 class ClassEditors extends StatefulWidget {
   const ClassEditors({Key? key}) : super(key: key);
@@ -48,7 +49,7 @@ class _ClassEditorsState extends State<ClassEditors> {
   Widget existingClassesSection(List<ClassData> existingClasses) {
     List<Widget> content;
     if(existingClasses.isNotEmpty) {
-      content = existingClasses.map((e) => ClassForm(classData: e)).toList();
+      content = existingClasses.map((e) => ExistingClassForm(classData: e)).toList();
     } else {
       content = [const Text('Nothing here yet')];
     }
@@ -63,7 +64,7 @@ class _ClassEditorsState extends State<ClassEditors> {
   Widget newClassesSection(List<ClassData> existingClasses) {
     List<Widget> content;
     if(existingClasses.isNotEmpty) {
-      content = existingClasses.map((e) => ClassForm(classData: e)).toList();
+      content = existingClasses.map((e) => NewClassForm(classData: e)).toList();
     } else {
       content = [const SizedBox()];
     }

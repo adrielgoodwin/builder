@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:builder/builder/state/class_maker_provider.dart';
 import 'package:flutter/material.dart';
-import 'class_field_input.dart';
+import 'new_class_field_input.dart';
 import '../../models/class_data.dart';
 import '../../models/field_data.dart';
 import 'package:provider/provider.dart';
@@ -10,16 +10,16 @@ import '../../colors/colors.dart';
 import 'package:uuid/uuid.dart';
 
 
-class ClassForm extends StatefulWidget {
-  const ClassForm({Key? key, required this.classData}) : super(key: key);
+class ExistingClassForm extends StatefulWidget {
+  const ExistingClassForm({Key? key, required this.classData}) : super(key: key);
 
   final ClassData classData;
 
   @override
-  _ClassFormState createState() => _ClassFormState();
+  _ExistingClassFormState createState() => _ExistingClassFormState();
 }
 
-class _ClassFormState extends State<ClassForm> {
+class _ExistingClassFormState extends State<ExistingClassForm> {
   var uuid = const Uuid();
 
   Map<String, Widget> fieldWidgets = {};
@@ -98,7 +98,7 @@ class _ClassFormState extends State<ClassForm> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          classNameSetter(classData: classData),
+          SaveAndDelete(classData: classData),
           newFields(),
           newFieldButton(),
         ],
@@ -135,25 +135,10 @@ class _ClassFormState extends State<ClassForm> {
   }
 }
 
-class classNameSetter extends StatefulWidget {
-  const classNameSetter({Key? key, required this.classData}) : super(key: key);
+class SaveAndDelete extends StatelessWidget{
+  const SaveAndDelete({Key? key, required this.classData}) : super(key: key);
 
   final ClassData classData;
-
-  @override
-  State<classNameSetter> createState() => _classNameSetterState();
-}
-
-class _classNameSetterState extends State<classNameSetter> {
-  
-  var classNameController = TextEditingController();
-  
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    classNameController.text = widget.classData.name;
-  }
   
   @override
   Widget build(BuildContext context) {
@@ -163,47 +148,10 @@ class _classNameSetterState extends State<classNameSetter> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            flex: 3,
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: TextField(
-                    controller: classNameController,
-                    onChanged: (value) {
-                      setState(() {
-                        widget.classData.name = [value.substring(0, 1).toUpperCase(), value.substring(1)].join();
-                      });
-                    },
-                    decoration: InputDecoration(
-                      label: const Text("Class"),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 33,
-                ),
-                Flexible(
-                  flex: 4,
-                  child: Text(
-                    widget.classData.name,
-                    style: const TextStyle(fontSize: 22),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Flexible(
             child: SizedBox(
               width: 150,
               child: ElevatedButton(
                 onPressed: () {
-                  if(widget.classData.name.length >= 2 && widget.classData.fieldData.length >= 2) {
-                    state.saveAndWriteFiles(widget.classData);
-                  }
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -220,7 +168,7 @@ class _classNameSetterState extends State<classNameSetter> {
             ),
           ),
           IconButton(
-              onPressed: () => state.deleteClass(widget.classData),
+              onPressed: () => state.deleteClass(classData),
               icon: const Icon(
                 Icons.delete,
                 color: Colors.redAccent,

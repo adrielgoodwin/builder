@@ -1,0 +1,6 @@
+Patterns im unsure about.
+
+I moved the state of the classes out of the classMakerState and put it back into the form.
+Now there is a ClassData instance getting passed around... This does not seem good.
+I'm gonna go back to the single item state, held in the provider, I think it will less
+confusing and will eliminate the need for callbacks

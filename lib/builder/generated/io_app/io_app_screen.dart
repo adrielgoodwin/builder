@@ -2,8 +2,6 @@ import "package:flutter/material.dart";
 import '../../state/class_maker_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/main_provider.dart';
-import '../record_displays/NewClassyRecords.dart';
-import '../forms/NewClassyForm.dart';
 class IoAppScreen extends StatefulWidget {
   IoAppScreen({Key? key, required this.rebuiltMessage}) : super(key: key);
 
@@ -38,8 +36,7 @@ class _IoAppScreenState extends State<IoAppScreen> {
           flex: 3,
           child: PageView(
             controller: recordPageController,
-            children: const [   
-              NewClassyRecords(),
+            children: const [
             ],
           ),
         ), 
@@ -49,8 +46,6 @@ class _IoAppScreenState extends State<IoAppScreen> {
             controller: formPageController,
             children: const [ 
               Center(child: Text('=)'),),
-
-              NewClassyForm(),
             ],
           ),
         ),

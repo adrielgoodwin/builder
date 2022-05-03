@@ -1,3 +1,52 @@
+Taurus ~ May 3rd 2022
+
+Stuff to do:
+
+~ Make support for List<String>
+  # A numbered text box with a + button below to add another one
+  # *Extra* re-arrangeable
+
+~ Remake interface
+  # One screen with three sections
+  1. Class Maker
+    a) New classes get added at top
+    b) Existing classes just show name and type
+    c) Edit existing class by clicking a button
+    d) Click an existing class to 'use' it in the middle section
+  2. Widget configuration
+    a)  
+
+
+~ Support for photos
+
+
+~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~ ~~~
+
+### Everything below here is pre Taurus.
+just gonna leave it for interests sake...
+or maybe cuz it fulfills my hoarder tendencies.
+
+
+to remember:
+if it doesnt work in chrome:
+1- Go to flutter\bin\cache and remove a file named: flutter_tools.stamp
+
+2- Go to flutter\packages\flutter_tools\lib\src\web and open the file chrome.dart.
+
+3- Find '--disable-extensions'
+
+4- Add '--disable-web-security'
+
+May 3rd 2022
+
+1. Make some tile widgets
+ a) Title and picture b) Title subtitle picture c) Title Subtitle d) *Extra* Title subtitle date
+    # each tile is wrapped in a gesture detector.
+    # on tap/touch/click it will go to the page for that particular record
+    # *Extra* if the tile contains an instantiation of different class,
+      clicking on it (the text/picture of other instantiation) will go to the page for that record
+2. In the widget maker page (or somewhere), assign a tile for each class
+
 
 April 11th
 1. Support for records to show some data when isAClass.
@@ -67,7 +116,7 @@ Things to be done, not in any real order
 
 ~ DONE ~ -Install Android Emulator
 -Write app to 'new app' location
--When generating a new class a must-have parameter is 'name'
+-~ DONE ~When generating a new class a must-have parameter is 'name'
 -Composition Files
     a) To show the data for a record of a class *^
     b) A little tile to show just a couple pieces of data about a class,

@@ -1,16 +1,16 @@
-# maker
+# Maker ~ Taurus
 
-an app that makes apps
+### This version is for making simple applications, like an inventory, scheduler or recipe book. 
+
+In a basic application you could probably imagine just two display types for any given data/class/record. 
+1. A page or widget containing all the data for the record
+   eg. a page with the details (fields) of a recipe: ingredients, total time, kitchen requirements, instructions etc.
+2. A small tile containing partial data for the record, usually with a link to its 'full record' page. 
+   eg. a tile with the picture and recipe name, which links to the page in the eg above.
+
+##### 1. Create some data classes 
+##### 2. Choose what data from those classes is shown in a tile**
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
