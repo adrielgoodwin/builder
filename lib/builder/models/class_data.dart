@@ -8,7 +8,8 @@ class ClassData {
   List<FieldData> fieldData;
   List<String> neededImports;
   // fields end
-  ClassData({required this.name, required this.id, required this.fieldData, required this.neededImports});
+
+  ClassData({this.name = "", required this.id, this.fieldData = const[], this.neededImports = const[]});
   factory ClassData.fromJson(Map<String, dynamic> data) {
     var fieldDataList = data['fieldData'];
     List<FieldData> listOfFieldData = [];

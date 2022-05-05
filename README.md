@@ -1,5 +1,8 @@
 # Maker ~ Taurus
 
+#### I don't love the ui space being taken up by buttons.
+#### At any moment, press CTRL/CMD + K to show the keybindings for your current focus var
+
 ### This version is for making simple applications, like an inventory, scheduler or recipe book. 
 
 In a basic application you could probably imagine just two display types for any given data/class/record. 
