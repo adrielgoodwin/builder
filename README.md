@@ -1,3 +1,6 @@
+I would like to see a standardized way for creating any kind of application.
+This is my effort to understand and generate software.
+
 # Maker ~ Taurus
 
 #### I don't love the ui space being taken up by buttons.
