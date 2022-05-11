@@ -12,7 +12,7 @@ class FocusClassMakerAction extends Action<FocusClassMakerIntent> {
 
   @override
   void invoke(FocusClassMakerIntent intent) {
-    focusProvider.CM.requestFocus();
+    focusProvider.CMS.requestFocus();
     print("requested focus for ClassMaker");
   }
 

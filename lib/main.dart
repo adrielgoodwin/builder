@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'builder/generated/providers/main_provider.dart';
 import 'builder/state/class_maker_provider.dart';
 import 'builder/state/focusProvider.dart';
+import 'builder/state/global_input_provider.dart';
 // screens
 import 'builder/presentation/home_screen.dart';
 import 'package:oktoast/oktoast.dart';
@@ -29,6 +30,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider.value(value: ClassMakerProvider()),
         ChangeNotifierProvider.value(value: MainProvider()),
         ChangeNotifierProvider.value(value: FocusProvider()),
+        ChangeNotifierProvider.value(value: GlobalInputProvider()),
       ],
       child: OKToast(
         textStyle: const TextStyle(fontSize: 19.0, color: Colors.white),

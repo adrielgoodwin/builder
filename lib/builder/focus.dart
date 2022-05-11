@@ -6,6 +6,8 @@ import 'package:builder/builder/state/class_maker_provider.dart';
 import 'models/field_data.dart';
 // Colors
 import 'colors/colors.dart';
+// Actions
+
 
 class ClassFieldsEditor extends StatefulWidget {
   const ClassFieldsEditor(this.cmp, {Key? key}) : super(key: key);
@@ -24,11 +26,15 @@ class _ClassFieldsEditorState extends State<ClassFieldsEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children:,
+    return Actions(
+      actions: {},
+      child: Focus(
+        child: Column(
+          children: widget.cmp.newClass.fieldData.map((e) => fieldDisplay(e)).toList(),
+        ),
+      ),
     );
   }
-
 
   Widget fieldDisplay(FieldData e) {
     String type = "";

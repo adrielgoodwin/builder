@@ -12,15 +12,15 @@ class FocusProvider with ChangeNotifier {
 
   /// ClassMaker
 
-  final _CM = FocusNode();
+  // Section
+  final _CMS = FocusNode();
 
-  FocusNode get CM => _CM;
+  FocusNode get CMS => _CMS;
 
-  // Fields in new class maker
-  Map<String, FocusNode> fields = {};
-  void addFieldNode(String id, FocusNode node) => fields[id] = node;
+  // New Class Creator
+  final _CC = FocusNode();
 
-
+  FocusNode get CC => _CC;
 
   /// WidgetMaker
 

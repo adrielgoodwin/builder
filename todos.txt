@@ -1,3 +1,7 @@
+Taurus ~ May 11th 2022
+
+write a composer that takes a datatype and makes an empty stless/stful widget with it
+
 Taurus ~ May 3rd 2022
 
 Stuff to do:

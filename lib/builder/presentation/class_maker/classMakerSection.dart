@@ -1,13 +1,11 @@
 // ignore_for_file: non_constant_identifier_names
 
+import 'package:builder/builder/state/global_input_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
 // Colors
 import '../../colors/colors.dart';
-
-// Forms
-import 'newClassForm.dart';
 
 // Nice widgets
 import '../../someWidgets.dart';
@@ -25,6 +23,9 @@ import '../../models/class_data.dart';
 
 // Composer
 import '../../file_composers/composerFunctions.dart';
+
+// Sections
+import 'ClassCreator.dart';
 
 class ClassMakerSection extends StatefulWidget {
   const ClassMakerSection({Key? key}) : super(key: key);
@@ -50,12 +51,13 @@ class _ClassMakerSectionState extends State<ClassMakerSection> {
     // Providers
     var fProv = Provider.of<FocusProvider>(context);
     var cmp = Provider.of<ClassMakerProvider>(context);
+    var gip = Provider.of<GlobalInputProvider>(context);
     var isMakingNewClass = Provider.of<ClassMakerProvider>(context).isMakingNewClass;
     // Actions
     var CMA = ClassMakerActions(fProv, cmp);
     // New form height adjustment
     var amtOfFields =
-        Provider.of<ClassMakerProvider>(context).fieldWidgets.length;
+        Provider.of<ClassMakerProvider>(context).newClass.fieldData.length;
     var height = MediaQuery.of(context).size.height - 54;
     var classBoxHeight = 0.0;
     if (isMakingNewClass) {
@@ -72,7 +74,7 @@ class _ClassMakerSectionState extends State<ClassMakerSection> {
       child: Actions(
         actions: CMA.actions,
         child: Focus(
-          focusNode: fProv.CM,
+          focusNode: fProv.CMS,
           child: Container(
             height: double.infinity,
             decoration: BoxDecoration(
@@ -90,7 +92,7 @@ class _ClassMakerSectionState extends State<ClassMakerSection> {
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                     height: classBoxHeight,
-                    child: const SingleChildScrollView(child: NewClassForm()),
+                    child: const SingleChildScrollView(child: ClassCreator()),
                   ),
                 ],
               ),

@@ -12,7 +12,7 @@ class FieldData {
   bool isAClass;
   bool isAList;
   // fields end
-  FieldData({this.parentClass = "", this.type = "String", required this.id, this.name = "", this.description = "", this.isAClass = false, this.isAList = false});
+  FieldData({this.parentClass = "", this.type = "String", required this.id, this.name = "fieldName", this.description = "", this.isAClass = false, this.isAList = false});
   factory FieldData.fromJson(Map<String, dynamic> data) {
     return FieldData(
       id: data['id'],

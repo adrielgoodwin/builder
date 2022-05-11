@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:builder/builder/models/field_data.dart';
 import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
+import '../ids.dart';
 
 // models
 import '../models/class_data.dart';
@@ -15,12 +15,8 @@ import '../write_files_api.dart';
 // functions that will compose and write a file
 import '../file_composers/composerFunctions.dart';
 
-// widgets
-import '../presentation/class_maker/new_class_field_input.dart';
-
 class ClassMakerProvider with ChangeNotifier {
 
-  var uuid = const Uuid();
 
   /// Class Maker Section UI
 
@@ -47,45 +43,49 @@ class ClassMakerProvider with ChangeNotifier {
 
   /// New Class Form
 
-  late ClassData _newClass;
+  // setup
+
+  ClassData _newClass = ClassData(name: 'NewClass', id: newId(), fieldData: [FieldData(id: newId())]);
 
   ClassData get newClass => _newClass;
 
-  Map<String, Widget> _fieldWidgets = {};
+  int selectedIndex = 0;
 
-  List<Widget> get fieldWidgets => _fieldWidgets.values.toList();
+  void setSelectedIndex(int index) {
+    selectedIndex = index;
+    notifyListeners();
+  }
 
   void beginNewClass() {
     _newClass = ClassData(name: 'NewClass', id: uuid.v1(), fieldData: [FieldData(id: uuid.v1())]);
     notifyListeners();
   }
 
-  void updateClassName(String newName) {
+  void setClassName(String newName) {
     _newClass.name = newName;
     notifyListeners();
   }
 
-  // void addField() {
-  //   var id = uuid.v1();
-  //   var field = FieldData(id: id);
-  //   _fieldWidgets[id] = NewClassFieldInput(
-  //     fieldId: id,
-  //     removeWidget: removeField,
-  //   );
-  //   _newClass.fieldData = [..._newClass.fieldData, field];
-  //   notifyListeners();
-  // }
+  // Fields
+
+  void addField(int index) {
+    print("Trying to add field");
+    newClass.fieldData.insert(index, FieldData(id: newId()));
+    selectedIndex = index;
+    notifyListeners();
+  }
+
+  void setField(int index, FieldData field) {
+    newClass.fieldData[index] = field;
+    notifyListeners();
+  }
 
   void updateField(FieldData fieldData) {
     newClass.fieldData[newClass.fieldData.indexWhere((element) => element.id == fieldData.id)] = fieldData;
   }
 
-  void removeField(String fieldId) {
-    if(fieldWidgets.length > 1) {
-      newClass.fieldData.removeWhere((element) => element.id == fieldId);
-      _fieldWidgets.removeWhere((key, value) => key == fieldId);
-      notifyListeners();
-    }
+  void removeField(int index) {
+    newClass.fieldData.removeAt(index);
   }
 
   Future<String> tryWritingClass() async {
