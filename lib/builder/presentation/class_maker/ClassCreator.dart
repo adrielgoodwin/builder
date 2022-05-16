@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../state/focusProvider.dart';
 import '../../state/class_maker_provider.dart';
+import '../../state/classProvider.dart';
 import 'new_class_display.dart';
 
 // Actions
@@ -18,7 +19,8 @@ class ClassCreator extends StatelessWidget {
     var fProv = Provider.of<FocusProvider>(context);
     var cmp = Provider.of<ClassMakerProvider>(context);
     var gip = Provider.of<GlobalInputProvider>(context);
-    var cfa = ClassFormActions(fProv, cmp, gip);
+    var cp = Provider.of<ClassProvider>(context);
+    var cfa = ClassFormActions(fProv, cmp, gip, cp);
     return Column(
       children: [
         Shortcuts(

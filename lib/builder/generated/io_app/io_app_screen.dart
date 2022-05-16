@@ -18,14 +18,12 @@ class _IoAppScreenState extends State<IoAppScreen> {
   var classes = ['NewClassy', ];
 @override
   Widget build(BuildContext context) {
-    var rebuildMessage = Provider.of<ClassMakerProvider>(context).rebuiltMessage;
     return Scaffold(
       body: Row(
       children: [
         Flexible(
           child: ListView(
             children: [
-            Text(rebuildMessage),
             TextButton(child: Text("load"), onPressed: () => Provider.of<MainProvider>(context, listen: false).loadDB(),),
               ...classes.map((e) => classListItem(e)).toList(),
             ],

@@ -82,7 +82,7 @@ class _WidgetBuilderSidebarState extends State<WidgetBuilderSidebar> {
   Widget textTile(TextLeaf tl) {
     return ElevatedButton(
       onPressed: () => setState(() {
-        widgetManipulator = TextParameters(textLeaf: tl);
+        // widgetManipulator = TextParameters(textLeaf: tl);
       }),
       child: Text(tl.id),
     );

@@ -12,7 +12,7 @@ class Paths {
   static const widgets = 'lib/builder/generated/widgets/';
   static const dataClasses = 'lib/builder/generated/data-classes/';
   static const provider = 'lib/builder/generated/providers/';
-  static const dataClassesRegistry = 'lib/builder/generated/data-classes/registry/registry.json';
+  static const registry = 'lib/builder/generated/data-classes/registry/registry.json';
   static const builderClasses = 'lib/builder/models/';
   static const builderRegistry = 'lib/builder/models/registry/registry.json';
   static const ioForms = 'lib/builder/generated/forms/';

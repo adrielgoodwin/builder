@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // provider
 import '../state/class_maker_provider.dart';
+import '../state/classProvider.dart';
 import '../state/global_input_provider.dart';
 import '../state/focusProvider.dart';
 // composition
@@ -28,7 +29,6 @@ class ToggleFormA extends Action<ToggleFormI> {
   final FocusProvider fp;
   @override
   void invoke(ToggleFormI intent) {
-    cmp.beginNewClass();
     cmp.setIsMakingNewClass(!cmp.isMakingNewClass);
     cmp.setNewClassBox(cmp.isMakingNewClass ? 250 : 0);
     fp.CC.requestFocus();
@@ -41,10 +41,6 @@ class ClassMakerActions {
   final FocusProvider focusProvider;
 
   ClassMakerActions(this.focusProvider, this.cmp);
-
-  // final ClassMakerProvider cmprovider;
-  //
-  // ClassMakerActions[this.cmprovider];
 
   /// Give
 
@@ -59,33 +55,6 @@ class ClassMakerActions {
     LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.space): FocusTopIntent(),
     LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.keyN): ToggleFormI(),
   };
-
-
-  // [ 1 ] Selects Class Maker Section
-
-    /// @ClassMakerSection
-    // [ N ] Open Add Class Form
-      /// @Classname text-field selected
-      // [ Enter ] Focus
-      // {
-      // [ Shift + N ] Focus ClassName
-      // [ N ] New field
-        // [ S ] String
-        // [ B ] Boolean
-        // [ I ] Int
-        // [ D ] Double
-        // [ C ] Class
-          // [ LEFT ] / [ RIGHT ] Navigate Classes
-          // [ ENTER ] Choose Class
-        // [ L ] IsList
-        // [ N ] Focus Name TextField
-          // [ ENTER ] Focus Back to Field
-    // [ Enter ]
-
-  // 2. [ Enter ] Select first class in list
-
-  /// While
-
 }
 
 // Set type
@@ -102,10 +71,47 @@ class SetTypeAction extends Action<SetTypeI> {
 
   @override
   void invoke(SetTypeI intent) {
-    var field = cmp.newClass.fieldData.elementAt(intent.index);
+    var field = cmp.elClass.fieldData.elementAt(intent.index);
     field.type = intent.type;
     cmp.setField(intent.index, field);
     print(intent.type);
+  }
+}
+
+
+class ToggleIsAListI extends Intent {
+  final int index;
+  const ToggleIsAListI(this.index);
+}
+
+class ToggleIsAListA extends Action<ToggleIsAListI> {
+  final ClassMakerProvider cmp;
+  ToggleIsAListA(this.cmp);
+
+  @override
+  void invoke(ToggleIsAListI intent) {
+    var field = cmp.elClass.fieldData.elementAt(intent.index);
+    field.isAList = !field.isAList;
+    cmp.setField(intent.index, field);
+    // print(intent.type);
+  }
+}
+
+class ToggleIsAClassI extends Intent {
+  final int index;
+  const ToggleIsAClassI(this.index);
+}
+
+class ToggleIsAClassA extends Action<ToggleIsAClassI> {
+  final ClassMakerProvider cmp;
+  ToggleIsAClassA(this.cmp);
+
+  @override
+  void invoke(ToggleIsAClassI intent) {
+    var field = cmp.elClass.fieldData.elementAt(intent.index);
+    field.isAClass = !field.isAClass;
+    cmp.setField(intent.index, field);
+    // print(intent.type);
   }
 }
 
@@ -123,11 +129,11 @@ class SetFieldNameA extends Action<SetFieldNameI> {
 
   @override
   void invoke(SetFieldNameI intent) {
-    var field = cmp.newClass.fieldData[intent.index];
+    var field = cmp.elClass.fieldData[intent.index];
     field.name = "";
     cmp.setField(intent.index, field);
     gip.setFunction((value) {
-      var field = cmp.newClass.fieldData[intent.index];
+      var field = cmp.elClass.fieldData[intent.index];
       field.name = value;
       cmp.setField(intent.index, field);
     });
@@ -165,7 +171,7 @@ class ChangeSelectionA extends Action<ChangeSelectionI> {
   final ClassMakerProvider cmp;
   @override
   void invoke(ChangeSelectionI intent) {
-    if(cmp.newClass.fieldData.length > intent.newSelection && intent.newSelection >= 0) {
+    if(cmp.elClass.fieldData.length > intent.newSelection && intent.newSelection >= 0) {
       cmp.setSelectedIndex(intent.newSelection);
     }
   }
@@ -189,13 +195,16 @@ class SetClassNameA extends Action<SetClassNameI> {
 class SubmitClassI extends Intent {}
 
 class SubmitClassA extends Action<SubmitClassI> {
-  SubmitClassA(this.cmp, this.fp);
+  SubmitClassA(this.cmp, this.fp, this.cp);
   final ClassMakerProvider cmp;
   final FocusProvider fp;
+  final ClassProvider cp;
 
   @override
   void invoke(SubmitClassI intent) {
-    writeClass(cmp.newClass);
+    if(!cp.nameInUse(cmp.elClass.name)) {
+      cp.addClass(cmp.elClass);
+    }
     // get other classes from ClassProvider
     // add the new class and write the registry
     //
@@ -203,19 +212,24 @@ class SubmitClassA extends Action<SubmitClassI> {
 }
 
 class ClassFormActions {
-  ClassFormActions(this.focusProvider, this.cmp, this.gip);
+
+  ClassFormActions(this.focusProvider, this.cmp, this.gip, this.cp);
   final ClassMakerProvider cmp;
   final FocusProvider focusProvider;
   final GlobalInputProvider gip;
+  final ClassProvider cp;
 
   late var actions = <Type, Action<Intent>>{
     SetTypeI: SetTypeAction(cmp),
+    ToggleIsAListI: ToggleIsAListA(cmp),
     AddFieldI: AddFieldA(cmp),
     ChangeSelectionI: ChangeSelectionA(cmp),
     SetClassNameI: SetClassNameA(cmp, gip, focusProvider),
     SetFieldNameI: SetFieldNameA(cmp, gip, focusProvider),
-    SubmitClassI: SubmitClassA(cmp, focusProvider),
+    SubmitClassI: SubmitClassA(cmp, focusProvider, cp),
   };
+
+  var b = LogicalKeySet(LogicalKeyboardKey.keyS);
 
   late var shortcuts = {
     // Set ClassName
@@ -227,7 +241,8 @@ class ClassFormActions {
     LogicalKeySet(LogicalKeyboardKey.keyI): SetTypeI('int', cmp.selectedIndex),
     LogicalKeySet(LogicalKeyboardKey.keyD): SetTypeI('double', cmp.selectedIndex),
     LogicalKeySet(LogicalKeyboardKey.keyT): SetTypeI('DateTime', cmp.selectedIndex),
-    LogicalKeySet(LogicalKeyboardKey.keyC): SetTypeI('Class', cmp.selectedIndex),
+    LogicalKeySet(LogicalKeyboardKey.keyL): ToggleIsAListI(cmp.selectedIndex),
+    LogicalKeySet(LogicalKeyboardKey.keyL): ToggleIsAClassI(cmp.selectedIndex),
     // Add field to position
     LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.keyB): AddFieldI(cmp.selectedIndex + 1),
     LogicalKeySet(LogicalKeyboardKey.shift, LogicalKeyboardKey.keyA): AddFieldI(cmp.selectedIndex),

@@ -57,7 +57,7 @@ class _ClassMakerSectionState extends State<ClassMakerSection> {
     var CMA = ClassMakerActions(fProv, cmp);
     // New form height adjustment
     var amtOfFields =
-        Provider.of<ClassMakerProvider>(context).newClass.fieldData.length;
+        Provider.of<ClassMakerProvider>(context).elClass.fieldData.length;
     var height = MediaQuery.of(context).size.height - 54;
     var classBoxHeight = 0.0;
     if (isMakingNewClass) {

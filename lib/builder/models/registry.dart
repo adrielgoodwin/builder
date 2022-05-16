@@ -1,14 +1,13 @@
 
 import "class_register.dart";
-import 'page_data.dart';
 // This code was generated on 2021-09-03 12:13
 // class
 class Registry {
   // fields
-  final String appName;
-  final List<ClassRegister> registeredClasses;
+  String appName;
+  List<ClassRegister> registeredClasses;
   // fields end
-  Registry({required this.appName, required this.registeredClasses});
+  Registry({this.appName = 'App name', this.registeredClasses = const []});
   factory Registry.fromJson(Map<String, dynamic> data) {
     var registeredClassesList = data['registeredClasses'];
     List<ClassRegister> listOfRegisteredClasses = [];

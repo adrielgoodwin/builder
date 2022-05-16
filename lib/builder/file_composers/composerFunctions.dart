@@ -28,14 +28,9 @@ Future<bool> writeClass(ClassData classData) async {
   return await sendWriteRequest(path: path, code: code);
 }
 
-Future writeRegistry(List<ClassData> classDatas) async {
-  var newRegistry = Registry(
-      appName: 'myApp',
-      registeredClasses: classDatas
-          .map((e) => ClassRegister(classData: e, dateModified: ''))
-          .toList());
-  var code = jsonEncode(newRegistry.toMap());
-  return await sendWriteRequest(path: Paths.dataClassesRegistry, code: code);
+Future writeRegistry(Registry registry) async {
+  var code = jsonEncode(registry.toMap());
+  return await sendWriteRequest(path: Paths.registry, code: code);
 }
 
 Future writeForm(ClassData classData) async {
@@ -62,9 +57,17 @@ Future writeIOAppScreen(List<ClassData> classDatas) async {
   return await sendWriteRequest(path: path, code: ioAppScreenCode);
 }
 
+Future deleteClass(ClassData classData) async {
+  await sendDeleteRequest(Paths.dataClasses + classData.name + '.dart');
+}
 
+Future deleteForm(ClassData classData) async {
+  await sendDeleteRequest(Paths.ioForms + classData.name + 'Form.dart');
+}
 
-
+Future deleteRecordPage(ClassData classData) async {
+  await sendDeleteRequest(Paths.ioRecordDisplays + classData.name + 'Records.dart');
+}
 
 
 

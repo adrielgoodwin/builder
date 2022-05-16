@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 // Providers
 import 'package:provider/provider.dart';
@@ -5,16 +7,29 @@ import 'builder/generated/providers/main_provider.dart';
 import 'builder/state/class_maker_provider.dart';
 import 'builder/state/focusProvider.dart';
 import 'builder/state/global_input_provider.dart';
+import 'builder/state/classProvider.dart';
 // screens
 import 'builder/presentation/home_screen.dart';
 import 'package:oktoast/oktoast.dart';
+// write files api
+import 'builder/write_files_api.dart';
+// models
+import 'builder/models/registry.dart';
+
 void main() {
-  runApp(const MyApp());
+  sendReadRequest(Paths.registry).then((value) {
+    if(value.isNotEmpty) {
+      runApp(MyApp(Registry.fromJson(jsonDecode(value))));
+    } else {
+      runApp(MyApp(Registry()));
+    }
+  });
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp(this.registry, {Key? key}) : super(key: key);
 
+  Registry registry;
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -28,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ClassMakerProvider()),
+        ChangeNotifierProvider.value(value: ClassProvider(widget.registry)),
         ChangeNotifierProvider.value(value: MainProvider()),
         ChangeNotifierProvider.value(value: FocusProvider()),
         ChangeNotifierProvider.value(value: GlobalInputProvider()),

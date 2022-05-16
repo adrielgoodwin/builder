@@ -6,6 +6,9 @@ import "class_data.dart";
 class ClassRegister {
   // fields
   final ClassData classData;
+  // todo: date(s) modified with a modification note
+  // todo: add a description
+  // final String description
   final String dateModified;
   // fields end
   ClassRegister({required this.classData, required this.dateModified});

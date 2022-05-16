@@ -1,6 +1,11 @@
 Taurus ~ May 11th 2022
 
-write a composer that takes a datatype and makes an empty stless/stful widget with it
+~ Make the ClassProvider
+~ Make class selector
+~ Finish write file function
+~ Show completed classes
+~ Make an edit option
+~ Write a composer that takes a datatype and makes an empty stless/stful widget with it
 
 Taurus ~ May 3rd 2022
 
