@@ -1,0 +1,24 @@
+{
+  "appName": "builder",
+  "registeredClasses": [
+    {
+      "classData": {
+        "id": "2ec533f1-d318-49da-83a1-ae09250ef7a4",
+        "name": "BuilderClass",
+        "fieldData": [
+          {
+            "id": "592962b0-7de5-11ec-a361-f173211692ba",
+            "type": "String",
+            "name": "AField",
+            "description": "description",
+            "isAClass": false,
+            "isAList": false
+          }
+        ],
+        "neededImports": []
+      },
+      "dateModified": "",
+      "isMainRequest": false
+    }
+  ]
+}

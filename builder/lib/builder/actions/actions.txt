@@ -1,0 +1,5 @@
+every scripted action is available by a key-press.
+
+within any given layer, a key-press could mean one thing, or another.
+
+Current location will be displayed at the top. e.g. classMaker > newClass > field
