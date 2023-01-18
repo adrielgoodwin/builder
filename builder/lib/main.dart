@@ -45,9 +45,6 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: ClassProvider(widget.registry)),
-        ChangeNotifierProvider.value(value: MainProvider()),
-        ChangeNotifierProvider.value(value: GlobalInputProvider()),
         ChangeNotifierProvider.value(value: AllState()),
       ],
       child: OKToast(

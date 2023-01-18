@@ -5,6 +5,8 @@ import 'dart:convert';
 
 import '../extensions.dart';
 
+import '../MetaWidgetTreeBuilder/meta_tree.dart';
+
 import 'package:flutter/material.dart';
 import '../actions/actionsSocket.dart';
 import '../models/class_data.dart';
@@ -37,6 +39,11 @@ enum ActionPlugs { classes, ui, classChanger, topLevel }
 /// State
 
 class AllState with ChangeNotifier {
+  ///
+  ///
+  /// Saving
+  ///
+  ///
 
   Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -75,6 +82,12 @@ class AllState with ChangeNotifier {
     writejson(json.encode(registry.toMap()));
   }
 
+  ///
+  ///
+  /// Action Plugs ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  ///
+  ///
+
   ActionPlugs activePlugEnum = ActionPlugs.classes;
 
   late ActionPlug activePlug = plugMap[ActionPlugs.classes]!;
@@ -108,33 +121,13 @@ class AllState with ChangeNotifier {
     ActionPlugs.topLevel: topLevelPlug,
   };
 
-  /// CLASSES
-  /// Section where classes are filtered through and added
 
-  late List<ClassData> classes = [initClass];
+  ///
+  ///
+  /// Top level 'global' sort of actions ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  ///
+  ///
 
-  int selectedClassIndex = 0;
-
-  ClassData get selectedClass => classes[selectedClassIndex];
-
-  void setSelectedClassIndex(int direction) {
-    selectedClassIndex =
-        getNewIndex(direction, classes.length, selectedClassIndex);
-    notifyListeners();
-  }
-
-  void setClassName(String name) {
-    var elClass = selectedClass;
-    elClass.name = name;
-    classes[selectedClassIndex] = elClass;
-    notifyListeners();
-  }
-
-  void addClass() {
-    classes.insert(selectedClassIndex,
-        ClassData(id: newId(), fieldData: [FieldData(id: newId())]));
-    notifyListeners();
-  }
 
   late ActionPlug topLevelPlug = ActionPlug(
     backOut: () {},
@@ -160,6 +153,40 @@ class AllState with ChangeNotifier {
     actionNew: () {},
     actionNewExpl: "",
   );
+
+  ///
+  ///
+  /// Class Making Actions
+  ///
+  ///
+
+  /// CLASSES
+  /// Section where classes are filtered through and added ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+
+  late List<ClassData> classes = [initClass];
+
+  int selectedClassIndex = 0;
+
+  ClassData get selectedClass => classes[selectedClassIndex];
+
+  void setSelectedClassIndex(int direction) {
+    selectedClassIndex =
+        getNewIndex(direction, classes.length, selectedClassIndex);
+    notifyListeners();
+  }
+
+  void setClassName(String name) {
+    var elClass = selectedClass;
+    elClass.name = name;
+    classes[selectedClassIndex] = elClass;
+    notifyListeners();
+  }
+
+  void addClass() {
+    classes.insert(selectedClassIndex,
+        ClassData(id: newId(), fieldData: [FieldData(id: newId())]));
+    notifyListeners();
+  }
 
   late ActionPlug classesPlug = ActionPlug(
       backOut: () => print('in classes plug'),
@@ -189,23 +216,31 @@ class AllState with ChangeNotifier {
       actionNewExpl: "Create a new class");
 
   // CLASS CHANGER
-  // Section where classes are changed
+  // Section where classes are changed ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
   var selectedFieldIndex = 0;
 
   FieldData get selectedField =>
       classes[selectedClassIndex].fieldData[selectedFieldIndex];
 
-  void setField(FieldData field) {
-    classes[selectedClassIndex].fieldData[selectedFieldIndex] = field;
-    notifyListeners();
-  }
-
   void setSelectedFieldIndex(int direction) {
     selectedFieldIndex = getNewIndex(direction,
         classes[selectedClassIndex].fieldData.length, selectedFieldIndex);
     notifyListeners();
   }
+  
+  void addField() {
+    // Add a field to class
+    classes[selectedClassIndex]
+        .fieldData
+        .insert(selectedFieldIndex, FieldData(id: newId()));
+  }
+  
+  void setField(FieldData field) {
+    classes[selectedClassIndex].fieldData[selectedFieldIndex] = field;
+    notifyListeners();
+  }
+
 
   void setFieldName(String name) {
     print(name);
@@ -222,12 +257,6 @@ class AllState with ChangeNotifier {
     setField(field);
   }
 
-  void addField() {
-    // Add a field to class
-    classes[selectedClassIndex]
-        .fieldData
-        .insert(selectedFieldIndex, FieldData(id: newId()));
-  }
 
   void toggleIsAList() {
     var field = selectedField;
@@ -265,7 +294,9 @@ class AllState with ChangeNotifier {
   );
 
   // User Interface
-  // Section where user interface is configured
+  // Section where user interface is configured ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+
+  
 
   late ActionPlug uiPlug = ActionPlug(
     backOut: () => {},
@@ -301,6 +332,7 @@ class AllState with ChangeNotifier {
   ///
   ///    Text input
   ///
+  ///
 
   FocusNode textInputFocus = FocusNode();
 
@@ -313,4 +345,5 @@ class AllState with ChangeNotifier {
     textController.clear();
     notifyListeners();
   }
+
 }

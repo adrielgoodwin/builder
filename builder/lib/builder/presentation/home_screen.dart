@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 /// Sections
 import 'classes/classesSection.dart';
+import 'ui/UISection.dart';
 import 'package:provider/provider.dart';
 import '../state/state.dart';
 // Widgets
@@ -72,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Flexible(
                           flex: 5,
-                          child: Text(""),
+                          child: UISection(),
                         )
                       ],
                     ),
