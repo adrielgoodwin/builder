@@ -241,9 +241,13 @@ class AllState with ChangeNotifier {
     notifyListeners();
   }
 
+  void setFieldByClassName(FieldData field, String className) {
+    var classIndex = classes.indexWhere((element) => element.name == className);
+    var fieldIndex = classes[classIndex].fieldData.indexOf(field);
+    classes[classIndex].fieldData[fieldIndex] = field;
+  }
 
   void setFieldName(String name) {
-    print(name);
     var field = selectedField;
     field.name = name.paramify();
     setField(field);
@@ -256,6 +260,20 @@ class AllState with ChangeNotifier {
     field.type = types[getNewIndex(1, 4, typeIndex)];
     setField(field);
   }
+
+  void setFieldDesc(String description) {
+    var field = selectedField;
+    field.description = description;
+    setField(field);
+  }
+
+  void setFieldDescription(String description, String fieldName, String className) {
+    var ciq = classes.firstWhere((element) => element.name == className); // class in question
+    var fiq = ciq.fieldData.firstWhere((element) => element.name == fieldName);
+    fiq.description = description;
+    setFieldByClassName(fiq, className);
+  }
+
 
 
   void toggleIsAList() {
@@ -282,21 +300,39 @@ class AllState with ChangeNotifier {
     actionk: () => toggleIsAList(),
     actionkExpl: "Toggle is a list",
     actionl: () {
-      print("action L");
       textInputFocus.requestFocus();
       setTextInputFunction(setFieldName);
     },
     actionlExpl: "Change field name",
-    actionSemicolon: () => {},
-    actionSemicolonExpl: "",
+    actionSemicolon: () {
+      textInputFocus.requestFocus();
+      setTextInputFunction(setFieldDesc);
+    },
+    actionSemicolonExpl: "Set field description",
     actionNew: () => addField(),
     actionNewExpl: "Add field to class",
   );
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // User Interface
   // Section where user interface is configured ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
-  
+
 
   late ActionPlug uiPlug = ActionPlug(
     backOut: () => {},
@@ -319,14 +355,43 @@ class AllState with ChangeNotifier {
     actionlExpl: "",
     actionSemicolon: () => {},
     actionSemicolonExpl: "",
-    actionNew: () {
-      // Add a field to class
-      classes[selectedClassIndex]
-          .fieldData
-          .insert(selectedFieldIndex, FieldData(id: newId()));
-    },
-    actionNewExpl: "Add field to class",
+    actionNew: () {},
+    actionNewExpl: "",
   );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   ///
   ///

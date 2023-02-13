@@ -101,6 +101,12 @@ class FieldDisplay extends StatelessWidget {
           style: TextStyle(
               fontSize: 18, color: C.purple, fontWeight: FontWeight.w400),
         ),
+        Text(
+          //
+          '  "${field.description}"',
+          style: TextStyle(
+              fontSize: 18, color: C.gold, fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+        ),
       ],
     );
   }

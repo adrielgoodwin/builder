@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'builder/generated/providers/main_provider.dart';
 import 'builder/state/global_input_provider.dart';
-import 'builder/state/classProvider.dart';
+// import 'builder/state/classProvider.dart';
 import 'builder/state/state.dart';
 // screens
 import 'builder/presentation/home_screen.dart';

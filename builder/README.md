@@ -1,5 +1,10 @@
 # Flutter Builder
 
+## TO DO 
+
+1. Generate input forms for classes.
+  Data-type dependant form generation with a managed state. 
+
 ###### A flutter app that builds flutter apps
 
 ## NO MORE BUTTONS... lol 
@@ -26,7 +31,8 @@ Using the action sockets it is quite easy to add functionality, with access to e
 
 ## GLOBAL INPUT 
 
-At the bottom of the state file you will see a text input with a settable function.
+At the bottom of the state file you will see a text input with a settable function.   
+This allows us to recieve text input from the user at any point of our application.
 ```
   FocusNode textInputFocus = FocusNode();
   TextEditingController textController = TextEditingController();
@@ -38,16 +44,16 @@ At the bottom of the state file you will see a text input with a settable functi
   }
 ```
 
-It is then placed in the widget tree 
+It is then placed in the widget tree.  
+The most important thing to note here is onChanged.
 ```
 TextField(
     focusNode: state.textInputFocus,
     controller: state.textController,
-    onChanged: (val) {state.textInputFunction(val);},
+    onChanged: (val) => state.textInputFunction(val),
     onSubmitted: (_) {state.rawkeyFocus.requestFocus(); state.textController.clear();},
 ),
-```
-This allows us to recieve text input from the user at any point of our application.   
+```   
 For example, we can use **actionL** in our **ActionPlug** to first *focus* the textInput, then *set the functionality* to change the name of a field in a class. 
 ```
     void setFieldName(String name) {
@@ -55,12 +61,14 @@ For example, we can use **actionL** in our **ActionPlug** to first *focus* the t
         field.name = name.paramify();
         setField(field);
     }
+
     ...
     actionl: () {
-        textInputFocus.requestFocus();
-        setTextInputFunction(setFieldName);
+        textInputFocus.requestFocus(); // Focus our input
+        setTextInputFunction(setFieldName); // Set its functionality to previously defined function
     },
     ...
+
 ```
 
 

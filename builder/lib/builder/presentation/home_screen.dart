@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextField(
                     focusNode: state.textInputFocus,
                     controller: state.textController,
-                    onChanged: (val) {state.textInputFunction(val);},
+                    onChanged: (val) => state.textInputFunction(val),
                     onSubmitted: (_) {state.rawkeyFocus.requestFocus(); state.textController.clear();},
                   ),
                   Expanded(
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: ClassSection(),
                         ),
                         Flexible(
-                          flex: 5,
+                          flex: 9,
                           child: UISection(),
                         )
                       ],
