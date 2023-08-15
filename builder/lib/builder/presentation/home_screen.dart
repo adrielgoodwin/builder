@@ -29,8 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     var state = Provider.of<AllState>(context);
+    state.loadState();
 
-    startSaveTimer(state.save);
+    // startSaveTimer(state.save);
 
     return Scaffold(
       body: GestureDetector(
@@ -57,16 +58,30 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(28.0),
               child: Column(
                 children: [
-                  TextField(
-                    focusNode: state.textInputFocus,
-                    controller: state.textController,
-                    onChanged: (val) => state.textInputFunction(val),
-                    onSubmitted: (_) {state.rawkeyFocus.requestFocus(); state.textController.clear();},
+                  Opacity(
+                    opacity: 0,
+                    child: TextField(
+                      focusNode: state.textInputFocus,
+                      controller: state.textController,
+                      onChanged: (val) {
+                        if(state.flags.textEditingWorkaround) {
+                          state.textInputFunction(val);
+                        }
+                        state.flags.textEditingWorkaround = true;
+                        state.notifyListeners();
+                      },
+                      onSubmitted: (_) {
+                        state.rawkeyFocus.requestFocus();
+                        state.textController.clear();
+                        state.flags.clear();
+                        state.notifyListeners();
+                      },
+                    ),
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Flexible(
                           flex: 3,
                           child: ClassSection(),

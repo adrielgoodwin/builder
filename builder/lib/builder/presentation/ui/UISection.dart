@@ -14,17 +14,19 @@ class UISection extends StatelessWidget {
           decoration: BoxDecoration(
               border: Border.all(),
               borderRadius: BorderRadius.all(Radius.circular(15))),
-          height: 700,
-          width: 700,
+          height: 500,
+          width: 500,
           child: SingleChildScrollView(
               child: Column(
             children: [
-              state.usedIElements,
+              // state.usedIElements,
             ],
           )),
         ),
         SingleChildScrollView(
-          child: Column(children: state.UIElements),
+          child: Column(
+            // children: state.UIElements,
+          ),
         )
       ],
     );
@@ -49,12 +51,12 @@ class SimpleWidgy extends StatelessWidget {
         Row(
           children: [
             Text(var1,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   color: Colors.amber,
                 )),
             Text(var2,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.blue,
                 )),

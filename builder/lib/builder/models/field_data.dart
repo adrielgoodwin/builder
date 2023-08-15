@@ -2,7 +2,7 @@
 // class
 // ignore_for_file: file_names
 
-class FieldData {
+class FieldData { 
   // fields
   String parentClass;
   String id;

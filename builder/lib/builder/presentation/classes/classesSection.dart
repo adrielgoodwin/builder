@@ -71,6 +71,7 @@ class FieldDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = Provider.of<AllState>(context);
+    var isEditingFieldName = state.flags.isEditingFieldName;
     var selectedField = state.selectedField;
     String type = "";
     field.isAList ? type = "List<${field.type}>" : type = field.type;
@@ -91,19 +92,30 @@ class FieldDisplay extends StatelessWidget {
               ),
         Text(
           // Show type eg. ~ double age
-          "  $type",
+          "  $type ",
           style: TextStyle(
               fontSize: 18, color: C.teal, fontWeight: FontWeight.w400),
         ),
+       isEditingFieldName && showSelected
+            ? const Icon(
+                // If it is, put a little green dot beside it
+                Icons.edit,
+                color: Colors.yellow,
+                size: 10,
+              )
+            : const SizedBox(
+                // Otherwise, a sized box so it doesnt move position on screen when selected/unselected
+                width: 10,
+              ),
         Text(
           //
-          "  ${field.name}",
+          " ${field.name}",
           style: TextStyle(
               fontSize: 18, color: C.purple, fontWeight: FontWeight.w400),
         ),
         Text(
           //
-          '  "${field.description}"',
+          '  ${field.description != "" ? "~" : ""}${field.description}',
           style: TextStyle(
               fontSize: 18, color: C.gold, fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
         ),

@@ -93,7 +93,7 @@ class KeyExplFuncs extends StatelessWidget {
                         stagger: 35),
                     keyExplanationFunction(
                         "G",
-                        const Icon(Icons.arrow_upward_rounded),
+                        const Icon(Icons.arrow_downward_rounded),
                         activePlug.downExpl,
                         activePlug.down,
                         activePlug.downExpl.isNotEmpty
@@ -101,7 +101,7 @@ class KeyExplFuncs extends StatelessWidget {
                             : Colors.grey),
                     keyExplanationFunction(
                         "H",
-                        const Icon(Icons.arrow_downward_rounded),
+                        const Icon(Icons.arrow_upward_rounded),
                         activePlug.upExpl,
                         activePlug.up,
                         activePlug.upExpl.isNotEmpty
@@ -114,7 +114,7 @@ class KeyExplFuncs extends StatelessWidget {
             ),
           ),
           SizedBox(
-            width: 190,
+            width: 120,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -222,8 +222,8 @@ Widget keyExplanationFunction(String key, Widget icon, String explanationText,
     //     color: Colors.amber.shade200,
     //     border: Border.all(),
     //     borderRadius: BorderRadius.circular(5)),
-    width: 125,
-    height: 130,
+    width: 100,
+    height: 125,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

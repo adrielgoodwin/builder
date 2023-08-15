@@ -21,9 +21,10 @@ void main() {
   //     runApp(MyApp(Registry.fromJson(jsonDecode(value))));
   //   } else {
       runApp(MyApp(Registry()));
-    windowManager.waitUntilReadyToShow().then((_) async{
-      await windowManager.setAsFrameless();
-  });
+  //   windowManager.waitUntilReadyToShow().then((_) async{
+  //     await windowManager.setAsFrameless();
+  //     await windowManager.setFullScreen(true);
+  // });
     // }
   // });
 }
@@ -46,21 +47,13 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider.value(value: AllState()),
       ],
-      child: OKToast(
-        textStyle: const TextStyle(fontSize: 19.0, color: Colors.white),
-        backgroundColor: Colors.grey,
-        radius: 10.0,
-        animationCurve: Curves.easeIn,
-        animationDuration: const Duration(milliseconds: 200),
-        duration: const Duration(seconds: 3),
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Builder',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: const HomeScreen(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Builder',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
         ),
+        home: const HomeScreen(),
       ),
     );
   }

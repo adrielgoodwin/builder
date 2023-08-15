@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 // import 'texts.dart';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 
 
@@ -11,10 +10,14 @@ import 'package:google_fonts/google_fonts.dart';
 // TextStyle medText = GoogleFonts.openSans(fontSize: 30);
 // TextStyle bigText = GoogleFonts.openSans(fontSize: 36);
 
-TextStyle tinyText = GoogleFonts.raleway(fontSize: 19);
-TextStyle smallText = GoogleFonts.raleway(fontSize: 22);
-TextStyle medText = GoogleFonts.raleway(fontSize: 30);
-TextStyle bigText = GoogleFonts.raleway(fontSize: 36);
+// TextStyle tinyText = GoogleFonts.raleway(fontSize: 19);
+// TextStyle smallText = GoogleFonts.raleway(fontSize: 22);
+// TextStyle medText = GoogleFonts.raleway(fontSize: 30);
+// TextStyle bigText = GoogleFonts.raleway(fontSize: 36);
+TextStyle tinyText = const TextStyle(fontSize: 19, color: Colors.white);
+TextStyle smallText = const TextStyle(fontSize: 22, color: Colors.white);
+TextStyle medText = const TextStyle(fontSize: 30, color: Colors.white);
+TextStyle bigText = const TextStyle(fontSize: 36, color: Colors.white);
 
 double medTextSize = 30;
 

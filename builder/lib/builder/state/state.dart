@@ -18,7 +18,7 @@ import '../models/registry.dart';
 import '../models/class_register.dart';
 
 ClassData initClass =
-    ClassData(id: 'id1234123', fieldData: [FieldData(id: 'asfsd')]);
+    ClassData(id: newId(), fieldData: [FieldData(id: newId())]);
 
 var uuid = const Uuid();
 
@@ -45,24 +45,35 @@ class AllState with ChangeNotifier {
   ///
   ///
 
+  bool stateLoaded = false;
+
+  void loadState() {
+    if (!stateLoaded) {
+      print("Loading state");
+      loadRegistries();
+      stateLoaded = true;
+    }
+    print("State is loaded");
+  }
+
   Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
-  Future<File> get localFile async {
+  Future<File> get registryFile async {
     final path = await localPath;
-    return File('$path/Adriel/builder-rewrite/registry.json');
+    return File('$path/code/builder/registry.json');
   }
 
   Future<File> writejson(String json) async {
-    final file = await localFile;
+    final file = await registryFile;
     // Write the file
     return file.writeAsString(json);
   }
 
   void loadRegistries() async {
-    var data = await localFile;
+    var data = await registryFile;
     var jsonString = await data.readAsString();
     var registry = Registry.fromJson(json.decode(jsonString));
     for (var element in registry.registeredClasses) {
@@ -80,11 +91,14 @@ class AllState with ChangeNotifier {
     var registry =
         Registry(appName: "Current App", registeredClasses: classRegisters);
     writejson(json.encode(registry.toMap()));
+    registryFile.then((value) => print(value));
   }
+
+  var flags = Flags();
 
   ///
   ///
-  /// Action Plugs ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  /// Action Plugs ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
   ///
   ///
 
@@ -121,13 +135,11 @@ class AllState with ChangeNotifier {
     ActionPlugs.topLevel: topLevelPlug,
   };
 
-
   ///
   ///
-  /// Top level 'global' sort of actions ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  /// Top level 'global' sort of actions ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
   ///
   ///
-
 
   late ActionPlug topLevelPlug = ActionPlug(
     backOut: () {},
@@ -161,9 +173,9 @@ class AllState with ChangeNotifier {
   ///
 
   /// CLASSES
-  /// Section where classes are filtered through and added ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  /// Section where classes are filtered through and added ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
-  late List<ClassData> classes = [initClass];
+  late List<ClassData> classes = [];
 
   int selectedClassIndex = 0;
 
@@ -177,7 +189,7 @@ class AllState with ChangeNotifier {
 
   void setClassName(String name) {
     var elClass = selectedClass;
-    elClass.name = name;
+    elClass.name = name.classify();
     classes[selectedClassIndex] = elClass;
     notifyListeners();
   }
@@ -186,6 +198,13 @@ class AllState with ChangeNotifier {
     classes.insert(selectedClassIndex,
         ClassData(id: newId(), fieldData: [FieldData(id: newId())]));
     notifyListeners();
+  }
+
+  void deleteClass() {
+    if (classes.indexOf(selectedClass) == classes.length - 1) {
+      selectedClassIndex--;
+    }
+    classes.removeWhere((element) => element.id == selectedClass.id);
   }
 
   late ActionPlug classesPlug = ActionPlug(
@@ -201,11 +220,16 @@ class AllState with ChangeNotifier {
       downExpl: "Select class below",
       up: () => setSelectedClassIndex(-1),
       upExpl: "Select class above",
-      actionj: () {},
-      actionjExpl: "",
-      actionk: () => print('action k'),
-      actionkExpl: "",
+      actionj: () {
+        save();
+      },
+      actionjExpl: "Save",
+      actionk: () => deleteClass(),
+      actionkExpl: "Delete Class",
       actionl: () {
+        flags.isEditingClassName = true;
+        textController.text = selectedClass.name;
+        notifyListeners();
         textInputFocus.requestFocus();
         setTextInputFunction(setClassName);
       },
@@ -215,9 +239,10 @@ class AllState with ChangeNotifier {
       actionNew: () => addClass(), // Add Class
       actionNewExpl: "Create a new class");
 
-  // CLASS CHANGER
-  // Section where classes are changed ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
+  // Field Editor
+  // Section where classes are changed ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
+  //flags
   var selectedFieldIndex = 0;
 
   FieldData get selectedField =>
@@ -228,14 +253,14 @@ class AllState with ChangeNotifier {
         classes[selectedClassIndex].fieldData.length, selectedFieldIndex);
     notifyListeners();
   }
-  
+
   void addField() {
     // Add a field to class
     classes[selectedClassIndex]
         .fieldData
         .insert(selectedFieldIndex, FieldData(id: newId()));
   }
-  
+
   void setField(FieldData field) {
     classes[selectedClassIndex].fieldData[selectedFieldIndex] = field;
     notifyListeners();
@@ -267,19 +292,36 @@ class AllState with ChangeNotifier {
     setField(field);
   }
 
-  void setFieldDescription(String description, String fieldName, String className) {
-    var ciq = classes.firstWhere((element) => element.name == className); // class in question
+  void setFieldDescription(
+      String description, String fieldName, String className) {
+    var ciq = classes.firstWhere(
+        (element) => element.name == className); // class in question
     var fiq = ciq.fieldData.firstWhere((element) => element.name == fieldName);
     fiq.description = description;
     setFieldByClassName(fiq, className);
   }
 
-
-
   void toggleIsAList() {
     var field = selectedField;
     selectedField.isAList ? field.isAList = false : field.isAList = true;
     setField(field);
+  }
+
+  void editSelectedField() {
+    flags.isEditingFieldName = true;
+    textController.text = selectedField.name;
+    notifyListeners();
+    textInputFocus.requestFocus();
+    setTextInputFunction(setFieldName);
+  }
+
+  void deleteField() {
+    if (selectedClass.fieldData.indexOf(selectedField) ==
+        selectedClass.fieldData.length - 1) {
+      selectedFieldIndex--;
+    }
+    selectedClass.fieldData
+        .removeWhere((element) => element.id == selectedField.id);
   }
 
   late ActionPlug classChangerPlug = ActionPlug(
@@ -295,44 +337,27 @@ class AllState with ChangeNotifier {
     downExpl: "Select field below",
     up: () => setSelectedFieldIndex(-1),
     upExpl: "Select field above",
-    actionj: () => setFieldType(1),
-    actionjExpl: "Iterate through types",
+    actionj: () => editSelectedField(),
+    actionjExpl: "Change field name",
     actionk: () => toggleIsAList(),
     actionkExpl: "Toggle is a list",
-    actionl: () {
-      textInputFocus.requestFocus();
-      setTextInputFunction(setFieldName);
-    },
-    actionlExpl: "Change field name",
+    actionl: () => setFieldType(1),
+    actionlExpl: "Iterate through types",
     actionSemicolon: () {
       textInputFocus.requestFocus();
       setTextInputFunction(setFieldDesc);
+      textController.clear();
     },
     actionSemicolonExpl: "Set field description",
-    actionNew: () => addField(),
+    actionNew: () {
+      addField();
+      editSelectedField();
+    },
     actionNewExpl: "Add field to class",
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // User Interface
-  // Section where user interface is configured ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-
-
+  // Section where user interface is configured ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
 
   late ActionPlug uiPlug = ActionPlug(
     backOut: () => {},
@@ -359,40 +384,6 @@ class AllState with ChangeNotifier {
     actionNewExpl: "",
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   ///
   ///
   ///    Text input
@@ -407,8 +398,17 @@ class AllState with ChangeNotifier {
 
   void setTextInputFunction(Function fn) {
     textInputFunction = fn;
-    textController.clear();
     notifyListeners();
   }
+}
 
+class Flags {
+  bool isEditingFieldName = false;
+  bool isEditingClassName = false;
+  bool textEditingWorkaround = false;
+
+  clear() {
+    isEditingFieldName = false;
+    textEditingWorkaround = false;
+  }
 }
