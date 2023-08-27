@@ -8,11 +8,13 @@ import '../extensions.dart';
 import '../MetaWidgetTreeBuilder/meta_tree.dart';
 
 import 'package:flutter/material.dart';
-import '../actions/actionsSocket.dart';
+// import '../actions/actionsSocket.dart';
+import '../actions/actionPlug.dart';
 import '../models/class_data.dart';
 import '../models/field_data.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path_provider/path_provider.dart';
+import '../colors/colors.dart';
 
 import '../models/registry.dart';
 import '../models/class_register.dart';
@@ -52,7 +54,7 @@ class AllState with ChangeNotifier {
 
   Future<File> get localFile async {
     final path = await localPath;
-    return File('$path/Adriel/builder-rewrite/registry.json');
+    return File('$path/code/builder/registry.json');
   }
 
   Future<File> writejson(String json) async {
@@ -79,7 +81,7 @@ class AllState with ChangeNotifier {
     }
     var registry =
         Registry(appName: "Current App", registeredClasses: classRegisters);
-    writejson(json.encode(registry.toMap()));
+    // writejson(json.encode(registry.toMap()));
   }
 
   ///
@@ -103,12 +105,13 @@ class AllState with ChangeNotifier {
   var rawkeyFocus = FocusNode();
 
   void recieveKeypress(String keyPress) {
+    print("Keypress: $keyPress");
     if (!textInputFocus.hasFocus) {
       // Check if keypress is in our Keys enum (actionSocket > stringKeys > Keys)
       if (stringKeys.containsKey(keyPress)) {
         activePlug.execute(stringKeys[keyPress]!);
-        lastActionExplanation =
-            activePlug.funcExplanations[stringKeys[keyPress]]!;
+        // lastActionExplanation =
+        //     activePlug.funcExplanations[stringKeys[keyPress]]!;
         notifyListeners();
       }
     }
@@ -117,7 +120,7 @@ class AllState with ChangeNotifier {
   late Map<ActionPlugs, ActionPlug> plugMap = {
     ActionPlugs.classes: classesPlug,
     ActionPlugs.classChanger: classChangerPlug,
-    ActionPlugs.ui: uiPlug,
+    // ActionPlugs.ui: uiPlug,
     ActionPlugs.topLevel: topLevelPlug,
   };
 
@@ -130,28 +133,7 @@ class AllState with ChangeNotifier {
 
 
   late ActionPlug topLevelPlug = ActionPlug(
-    backOut: () {},
-    backOutExpl: "",
-    left: () {},
-    leftExpl: "",
-    right: () {},
-    rightExpl: "",
-    select: () {},
-    selectExpl: "",
-    down: () {},
-    downExpl: "",
-    up: () {},
-    upExpl: "",
-    actionj: () {},
-    actionjExpl: "",
-    actionk: () {},
-    actionkExpl: "",
-    actionl: () {},
-    actionlExpl: "",
-    actionSemicolon: () {},
-    actionSemicolonExpl: "",
-    actionNew: () {},
-    actionNewExpl: "",
+    [],
   );
 
   ///
@@ -188,32 +170,47 @@ class AllState with ChangeNotifier {
     notifyListeners();
   }
 
-  late ActionPlug classesPlug = ActionPlug(
-      backOut: () => print('in classes plug'),
-      backOutExpl: "Backout to global",
-      left: () => print('left'),
-      leftExpl: "",
-      right: () => setActivePlug(ActionPlugs.ui),
-      rightExpl: "Move to <UI>",
-      select: () => setActivePlug(ActionPlugs.classChanger),
-      selectExpl: "Select class",
-      down: () => setSelectedClassIndex(1),
-      downExpl: "Select class below",
-      up: () => setSelectedClassIndex(-1),
-      upExpl: "Select class above",
-      actionj: () {},
-      actionjExpl: "",
-      actionk: () => print('action k'),
-      actionkExpl: "",
-      actionl: () {
+  late ActionPlug classesPlug = ActionPlug([
+    KeyFunction(
+      key: Keys.r, 
+      color: C.gold, 
+      action: () => setActivePlug(ActionPlugs.ui), 
+      definition:  "Move to <UI>",
+    ),
+    KeyFunction(
+      key: Keys.enter, 
+      color: C.gold, 
+      action: () => setActivePlug(ActionPlugs.classChanger), 
+      definition:  "Select Class",
+    ),
+    KeyFunction(
+      key: Keys.c, 
+      color: C.gold, 
+      action: () => setSelectedClassIndex(1), 
+      definition:  "Select class below",
+    ),
+    KeyFunction(
+      key: Keys.v, 
+      color: C.gold, 
+      action: () => setSelectedClassIndex(-1), 
+      definition:  "Select class above",
+    ),
+    KeyFunction(
+      key: Keys.j, 
+      color: C.gold, 
+      action: () {
         textInputFocus.requestFocus();
         setTextInputFunction(setClassName);
-      },
-      actionlExpl: "Set class name",
-      actionSemicolon: () => print('action semicolon'),
-      actionSemicolonExpl: "",
-      actionNew: () => addClass(), // Add Class
-      actionNewExpl: "Create a new class");
+      }, 
+      definition:  "Set class name",
+    ),
+    KeyFunction(
+      key: Keys.n, 
+      color: C.gold, 
+      action: () => addClass(), 
+      definition:  "Add class",
+    ),
+  ]);
 
   // CLASS CHANGER
   // Section where classes are changed ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
@@ -253,11 +250,9 @@ class AllState with ChangeNotifier {
     setField(field);
   }
 
-  void setFieldType(int direction) {
+  void setFieldType(String type) {
     var field = selectedField;
-    var types = ['String', 'int', 'double', 'DateTime'];
-    var typeIndex = types.indexOf(selectedField.type);
-    field.type = types[getNewIndex(1, 4, typeIndex)];
+    field.type = type;
     setField(field);
   }
 
@@ -281,45 +276,85 @@ class AllState with ChangeNotifier {
     selectedField.isAList ? field.isAList = false : field.isAList = true;
     setField(field);
   }
-
-  late ActionPlug classChangerPlug = ActionPlug(
-    backOut: () => setActivePlug(ActionPlugs.classes),
-    backOutExpl: "Deselect class",
-    left: () {},
-    leftExpl: "",
-    right: () {},
-    rightExpl: "",
-    select: () {},
-    selectExpl: "",
-    down: () => setSelectedFieldIndex(1),
-    downExpl: "Select field below",
-    up: () => setSelectedFieldIndex(-1),
-    upExpl: "Select field above",
-    actionj: () => setFieldType(1),
-    actionjExpl: "Iterate through types",
-    actionk: () => toggleIsAList(),
-    actionkExpl: "Toggle is a list",
-    actionl: () {
+  late ActionPlug classChangerPlug = ActionPlug([
+    KeyFunction(
+      key: Keys.q,
+      color: C.gold, 
+      action: () => setActivePlug(ActionPlugs.classes), 
+      definition: "Deselect class",
+    ),
+    KeyFunction(
+      key: Keys.c,
+      color: C.gold, 
+      action: () => setSelectedFieldIndex(1),
+      definition: "Select field below",
+    ),
+    KeyFunction(
+      key: Keys.v,
+      color: C.gold, 
+      action: () => setSelectedFieldIndex(-1),
+      definition: "Select field above",
+    ),
+    KeyFunction(
+      key: Keys.v,
+      color: C.gold, 
+      action: () => setSelectedFieldIndex(-1),
+      definition: "Select field above",
+    ),
+    KeyFunction(
+      key: Keys.a,
+      color: C.teal, 
+      action: () => setFieldType('int'),
+      definition: "Int",
+    ),
+    KeyFunction(
+      key: Keys.s,
+      color: C.teal, 
+      action: () => setFieldType('String'),
+      definition: "String",
+    ),
+    KeyFunction(
+      key: Keys.d,
+      color: C.teal, 
+      action: () => setFieldType('DateTime'),
+      definition: "DateTime",
+    ),
+    KeyFunction(
+      key: Keys.f,
+      color: C.teal, 
+      action: () => setFieldType('Double'),
+      definition: "Float",
+    ),
+    KeyFunction(
+      key: Keys.k,
+      color: C.teal, 
+      action: () {
+        // Type in class
+      },
+      definition: "Set Klass",
+    ),
+    KeyFunction(
+      key: Keys.k,
+      color: C.teal, 
+      action: () => toggleIsAList(),
+      definition: "Set Klass",
+    ),
+    KeyFunction(
+      key: Keys.enter,
+      color: C.teal, 
+      action: () {
       textInputFocus.requestFocus();
       setTextInputFunction(setFieldName);
     },
-    actionlExpl: "Change field name",
-    actionSemicolon: () {
-      textInputFocus.requestFocus();
-      setTextInputFunction(setFieldDesc);
-    },
-    actionSemicolonExpl: "Set field description",
-    actionNew: () => addField(),
-    actionNewExpl: "Add field to class",
-  );
-
-
-
-
-
-
-
-
+      definition: "Change Name",
+    ),
+    KeyFunction(
+      key: Keys.n,
+      color: C.teal, 
+      action: () => addField(),
+      definition: "Add Field",
+    ),
+  ]);
 
 
 
@@ -332,32 +367,6 @@ class AllState with ChangeNotifier {
   // User Interface
   // Section where user interface is configured ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
-
-
-  late ActionPlug uiPlug = ActionPlug(
-    backOut: () => {},
-    backOutExpl: "",
-    left: () => setActivePlug(ActionPlugs.classes),
-    leftExpl: "Back to classes",
-    right: () {},
-    rightExpl: "",
-    select: () {}, // set field name
-    selectExpl: "",
-    down: () {},
-    downExpl: "",
-    up: () => {},
-    upExpl: "",
-    actionj: () {},
-    actionjExpl: "",
-    actionk: () {},
-    actionkExpl: "",
-    actionl: () => {},
-    actionlExpl: "",
-    actionSemicolon: () => {},
-    actionSemicolonExpl: "",
-    actionNew: () {},
-    actionNewExpl: "",
-  );
 
 
 

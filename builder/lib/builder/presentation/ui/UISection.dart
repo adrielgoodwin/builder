@@ -19,12 +19,12 @@ class UISection extends StatelessWidget {
           child: SingleChildScrollView(
               child: Column(
             children: [
-              state.usedIElements,
+              // state.usedIElements,
             ],
           )),
         ),
         SingleChildScrollView(
-          child: Column(children: state.UIElements),
+          child: Column(children: [Text("Hi")]),
         )
       ],
     );

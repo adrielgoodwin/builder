@@ -38,8 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: RawKeyboardListener(
           onKey: (event) {
             if (event.runtimeType.toString() == "RawKeyDownEvent") {
-              if (event.character != null) {
-                state.recieveKeypress(event.character!);
+              // print(event.character);
+              if (event.data.keyLabel != null) {
+                state.recieveKeypress(event.data.keyLabel);
               }
             }
           },
